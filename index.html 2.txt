@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Search Puzzles</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Choose a Puzzle</h1>
+  <div class="puzzle-links">
+    <a href="puzzle1.html" class="puzzle-link">Marvel</a>
+    <a href="puzzle2.html" class="puzzle-link">HALO</a>
+    <a href="puzzle3.html" class="puzzle-link">2024 Musical Artist</a>
+    <a href="puzzle4.html" class="puzzle-link">WWE 2025</a>
+    <a href="puzzle5.html" class="puzzle-link">Horror Mega Puzzle</a>
+    <a href="puzzle6.html" class="puzzle-link">Industry Lingo</a>
+    <a href="puzzle7.html" class="puzzle-link">Gaming Indie Darlings</a>
+    <a href="puzzle8.html" class="puzzle-link">Animals</a>
+  </div>
+</body>
+</html>

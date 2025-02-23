@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animals</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Animals</h1>
+  <div id="wordsearch"></div>
+  <div id="word-list">
+    <div>Words to find:</div>
+    <div id="words"></div>
+  </div>
+  <button id="reset-button">Reset Game</button>
+  <div class="nav-links">
+    <a href="index.html">Back to Menu</a>
+    <a href="puzzle1.html">Once more, with feeling</a>
+  </div>
+ <!-- word pool -->
+  <div id="word-pool" data-words='["DOG", "CAT", "LION", "TIGER", "ZEBRA", "PANDA", "HORSE", "RABBIT", "MONKEY", "GIRAFFE",
+"WOLF", "FOX", "DEER", "BEAR", "KANGAROO", "OTTER", "BEETLE", "FALCON", "PARROT", "PEACOCK",
+"PENGUIN", "SHARK", "DOLPHIN", "WHALE", "OCTOPUS", "TURTLE", "LIZARD", "FERRET", "CRAB", "SNAIL",
+"TOAD", "FROG", "GECKO", "BADGER", "DONKEY", "SQUID", "MOTH", "MOOSE", "BOBCAT", "WEASEL",
+"BISON", "NEWT", "VULTURE", "COYOTE", "FINCH", "JAY", "BASS", "EAGLE", "KOALA", "SWAN" ]'></div>
+
+  <!-- Puzzle-specific settings -->
+  <script>
+    const gridSize = 15;  // Defines the 15x15 grid size
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
+
