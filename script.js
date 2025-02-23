@@ -5,7 +5,8 @@ let isDragging = false;
 let startCell = null;
 let direction = null;
 let currentWords = []; // Stores the 15 randomly selected words
-
+let timerInterval = null; // Timer interval
+let secondsElapsed = 0; // Total seconds elapsed
 
 // Initialize the game
 document.addEventListener("DOMContentLoaded", initializeGame);
@@ -13,7 +14,27 @@ document.addEventListener("DOMContentLoaded", initializeGame);
 // Reset button
 document.getElementById("reset-button").addEventListener("click", resetGame);
 
+// ========================
+// Timer Functions
+// ========================
 
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    updateTimerDisplay();
+  }, 1000); // Update every second
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(secondsElapsed / 60);
+  const seconds = secondsElapsed % 60;
+  const timerDisplay = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  document.getElementById("timer").textContent = timerDisplay;
+}
 
 // ========================
 // Core Game Functions
