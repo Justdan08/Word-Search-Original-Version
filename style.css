@@ -58,7 +58,7 @@ h1 {
   margin: 15px auto;
   padding: 10px 20px;
   background-color: #4984B8;
-  color: blue;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -69,14 +69,14 @@ h1 {
   margin: 20px;
 }
 
-.puzzle-link {
-  display: block;
-  margin: 10px;
-  padding: 10px;
+#puzzle-link {
+  margin: 15px auto;
+  padding: 10px 20px;
   background-color: #4984B8;
-  color: blue;
-  text-decoration: none;
+  color: white;
+  border: none;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .nav-links a {
