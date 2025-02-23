@@ -58,22 +58,12 @@ h1 {
   margin: 15px auto;
   padding: 10px 20px;
   background-color: #4984B8;
-  color: white;
+  color: blue;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
-#timer {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-  padding: 5px 10px;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-}
+
 
 .puzzle-links {
   margin: 20px;
@@ -84,7 +74,7 @@ h1 {
   margin: 10px;
   padding: 10px;
   background-color: #4984B8;
-  color: white;
+  color: blue;
   text-decoration: none;
   border-radius: 5px;
 }
