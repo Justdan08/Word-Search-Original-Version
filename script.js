@@ -10,7 +10,6 @@ let direction = null;
 let currentWords = []; // Stores the 15 randomly selected words
 let timerInterval = null; // Timer interval
 let secondsElapsed = 0; // Total seconds elapsed
-const gridSize = 10; // Grid size, adjust as needed
 
 // Initialize the game
 document.addEventListener("DOMContentLoaded", initializeGame);
