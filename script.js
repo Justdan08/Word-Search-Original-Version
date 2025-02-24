@@ -40,52 +40,7 @@ function updateTimerDisplay() {
   document.getElementById("timer").textContent = timerDisplay;
 }
 
-// ========================
-// Combo Functions
-// ========================
 
-function startComboTimer() {
-  comboTimeLeft = 10; // Reset combo timer to 10 seconds
-  updateComboBar();
-
-  if (comboInterval) clearInterval(comboInterval); // Clear existing interval
-
-  comboInterval = setInterval(() => {
-    comboTimeLeft--;
-    updateComboBar();
-
-    if (comboTimeLeft <= 0) {
-      clearInterval(comboInterval);
-      comboMultiplier = 1; // Reset combo multiplier
-      updateComboBar();
-    }
-  }, 1000); // Update every second
-}
-
-function updateComboBar() {
-  const comboBar = document.getElementById("combo-bar");
-  const comboText = document.getElementById("combo-text");
-
-  // Update bar width
-  comboBar.style.width = `${(comboTimeLeft / 10) * 100}%`;
-
-  // Update combo text
-  comboText.textContent = `Combo: ${comboMultiplier}x`;
-}
-
-// ========================
-// Score Functions
-// ========================
-
-function updateScoreDisplay() {
-  document.getElementById("score").textContent = `Score: ${score}`;
-}
-
-function calculatePoints(wordLength) {
-  const timeChunk = Math.floor(secondsElapsed / 15); // Calculate 15-second chunks
-  const pointsPerLetter = Math.max(50 - (timeChunk * 5), 0); // Base 50, decrease by 5 every 15 seconds
-  return wordLength * pointsPerLetter * comboMultiplier; // Apply combo multiplier
-}
 
 // ========================
 // Core Game Functions
