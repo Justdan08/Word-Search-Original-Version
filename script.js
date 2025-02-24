@@ -46,8 +46,6 @@ function initializeGame() {
   const wordsearch = document.getElementById("wordsearch");
   const gridSize = parseInt(wordsearch.dataset.gridSize, 10); // Fetch the grid size from the data attribute
 
-  // Proceed with the rest of the code
-}
   // Reset game state
   secondsElapsed = 0;
   updateTimerDisplay();
