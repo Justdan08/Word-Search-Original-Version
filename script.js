@@ -10,6 +10,7 @@ let direction = null;
 let currentWords = []; // Stores the 15 randomly selected words
 let timerInterval = null; // Timer interval
 let secondsElapsed = 0; // Total seconds elapsed
+const gridSize = 10; // Grid size, adjust as needed
 
 // Initialize the game
 document.addEventListener("DOMContentLoaded", initializeGame);
@@ -132,6 +133,49 @@ function createWordListDisplay(wordsContainer) {
 // Word Placement
 // ========================
 
+function placeWord(word) {
+  const directions = [
+    [0, 1],  [1, 0],  [1, 1],  [-1, 1], // Right, Down, Down-Right, Up-Right
+    [0, -1], [-1, 0], [-1, -1], [1, -1] // Left, Up, Up-Left, Down-Left
+  ];
+
+  let placed = false;
+
+  while (!placed) {
+    const startRow = Math.floor(Math.random() * gridSize);
+    const startCol = Math.floor(Math.random() * gridSize);
+    const [rowStep, colStep] = directions[Math.floor(Math.random() * directions.length)];
+    let row = startRow;
+    let col = startCol;
+    let valid = true;
+    let positions = [];
+
+    for (let i = 0; i < word.length; i++) {
+      if (row < 0 || row >= gridSize || col < 0 || col >= gridSize) {
+        valid = false;
+        break;
+      }
+
+      const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+      if (!cell || (cell.textContent && cell.textContent !== word[i])) {
+        valid = false;
+        break;
+      }
+
+      positions.push(cell);
+      row += rowStep;
+      col += colStep;
+    }
+
+    if (valid) {
+      positions.forEach((cell, index) => {
+        cell.textContent = word[index];
+      });
+      placed = true;
+    }
+  }
+}
+
 function fillRandomLetters() {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   document.querySelectorAll(".cell").forEach(cell => {
@@ -173,74 +217,6 @@ function endDrag() {
   isDragging = false;
   direction = null;
   checkForWord();
-}
-
-function getDirection(start, end) {
-  const rowDiff = parseInt(end.dataset.row) - parseInt(start.dataset.row);
-  const colDiff = parseInt(end.dataset.col) - parseInt(start.dataset.col);
-
-  if (rowDiff === 0) return "horizontal";
-  if (colDiff === 0) return "vertical";
-  if (Math.abs(rowDiff) === Math.abs(colDiff)) return "diagonal";
-  return null;
-}
-
-function isValidDirection(last, cell, direction) {
-  const lastRow = parseInt(last.dataset.row);
-  const lastCol = parseInt(last.dataset.col);
-  const row = parseInt(cell.dataset.row);
-  const col = parseInt(cell.dataset.col);
-
-  switch (direction) {
-    case "horizontal":
-      return row === lastRow;
-    case "vertical":
-      return col === lastCol;
-    case "diagonal":
-      return Math.abs(row - lastRow) === Math.abs(col - lastCol);
-    default:
-      return false;
-  }
-}
-
-function getMissingCells(last, current) {
-  let missingCells = [];
-  const rowStep = Math.sign(parseInt(current.dataset.row) - parseInt(last.dataset.row));
-  const colStep = Math.sign(parseInt(current.dataset.col) - parseInt(last.dataset.col));
-  let row = parseInt(last.dataset.row) + rowStep;
-  let col = parseInt(last.dataset.col) + colStep;
-
-  while (row !== parseInt(current.dataset.row) || col !== parseInt(current.dataset.col)) {
-    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-    if (cell) missingCells.push(cell);
-    row += rowStep;
-    col += colStep;
-  }
-
-  return missingCells;
-}
-
-function checkForWord() {
-  const selectedWord = selectedCells.map(cell => cell.textContent).join("");
-  if (currentWords.includes(selectedWord) && !foundWords.includes(selectedWord)) {
-    foundWords.push(selectedWord);
-    selectedCells.forEach(cell => {
-      cell.classList.add("found");
-      cell.classList.remove("selected");
-    });
-
-    document.querySelectorAll("#words div").forEach(el => {
-      if (el.textContent === selectedWord) el.classList.add("found");
-    });
-
-    if (foundWords.length === currentWords.length) {
-      stopTimer();
-      alert("You found all the words!");
-    }
-  } else {
-    selectedCells.forEach(cell => cell.classList.remove("selected"));
-  }
-  selectedCells = [];
 }
 
 // ========================
