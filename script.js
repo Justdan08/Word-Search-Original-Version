@@ -7,10 +7,6 @@ let direction = null;
 let currentWords = []; // Stores the 15 randomly selected words
 let timerInterval = null; // Timer interval
 let secondsElapsed = 0; // Total seconds elapsed
-let score = 0; // Added score tracking
-let comboMultiplier = 1; // Combo multiplier
-let comboTimeLeft = 0; // Time left for current combo
-let comboInterval = null; // Combo timer interval
 
 // Initialize the game
 document.addEventListener("DOMContentLoaded", initializeGame);
