@@ -82,6 +82,10 @@ function initializeGame() {
   // Set grid template columns
   wordsBox.style.gridTemplateColumns = "repeat(3, 1fr)"; // 3 equal-width columns
 
+  const wordsearch = document.getElementById("wordsearch");
+const gridSize = parseInt(wordsearch.dataset.gridSize, 15); // This will get the grid size from the data attribute and convert it to an integer
+
+
   // Add "Words to find:" title
   const wordsTitle = document.createElement("div");
   wordsTitle.textContent = "Words to find:";
