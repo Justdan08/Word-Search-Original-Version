@@ -43,14 +43,14 @@ function updateTimerDisplay() {
 // ========================
 
 function initializeGame() {
+  const wordsearch = document.getElementById("wordsearch");
+  const gridSize = parseInt(wordsearch.dataset.gridSize, 10); // Fetch the grid size from the data attribute
+
+  // Proceed with the rest of the code
+}
   // Reset game state
-  score = 0;
   secondsElapsed = 0;
-  comboMultiplier = 1;
-  comboTimeLeft = 0;
-  updateScoreDisplay();
   updateTimerDisplay();
-  updateComboBar();
   startTimer();
 
   // Get the word pool from the HTML
@@ -81,9 +81,6 @@ function initializeGame() {
 
   // Set grid template columns
   wordsBox.style.gridTemplateColumns = "repeat(3, 1fr)"; // 3 equal-width columns
-
-  const wordsearch = document.getElementById("wordsearch");
-const gridSize = parseInt(wordsearch.dataset.gridSize, 15); // This will get the grid size from the data attribute and convert it to an integer
 
 
   // Add "Words to find:" title
