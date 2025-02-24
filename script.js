@@ -36,17 +36,12 @@ function updateTimerDisplay() {
   document.getElementById("timer").textContent = timerDisplay;
 }
 
-
-
 // ========================
 // Core Game Functions
 // ========================
 
 function initializeGame() {
-  const wordsearch = document.getElementById("wordsearch");
-  const gridSize = parseInt(wordsearch.dataset.gridSize, 10); // Fetch the grid size from the data attribute
-
-  // Reset game state
+  // Reset timer
   secondsElapsed = 0;
   updateTimerDisplay();
   startTimer();
@@ -79,7 +74,6 @@ function initializeGame() {
 
   // Set grid template columns
   wordsBox.style.gridTemplateColumns = "repeat(3, 1fr)"; // 3 equal-width columns
-
 
   // Add "Words to find:" title
   const wordsTitle = document.createElement("div");
@@ -203,11 +197,8 @@ function startDrag(cell) {
   startCell = cell;
   selectedCells = [cell];
   direction = null; // Reset direction on new drag
-
-  // Ensure the starting cell is visually selected
   cell.classList.add("selected");
 }
-
 
 function dragOver(cell) {
   if (!isDragging || !startCell) return;
@@ -275,17 +266,6 @@ function endDrag() {
 function checkForWord() {
   const selectedWord = selectedCells.map(cell => cell.textContent).join("");
   if (currentWords.includes(selectedWord) && !foundWords.includes(selectedWord)) {
-    // Calculate and add score
-    const wordScore = calculatePoints(selectedWord.length);
-    score += wordScore;
-    updateScoreDisplay();
-
-    // Update combo
-    if (comboTimeLeft > 0) {
-      comboMultiplier += 0.25; // Increase combo multiplier
-    }
-    startComboTimer(); // Restart combo timer
-
     foundWords.push(selectedWord);
     selectedCells.forEach(cell => {
       if (!cell.classList.contains("found")) {
@@ -300,7 +280,7 @@ function checkForWord() {
 
     if (foundWords.length === currentWords.length) {
       stopTimer();
-      alert(`Good Job Big Dog!\nFinal Score: ${score}`);
+      alert("Good Job Big Dog!");
     }
   } else {
     selectedCells.forEach(cell => {
@@ -333,7 +313,6 @@ function handleTouchStart(e) {
   }
 }
 
-
 function handleTouchMove(e) {
   e.preventDefault();
   const touch = e.touches[0];
@@ -358,11 +337,6 @@ function resetGame() {
   document.getElementById("wordsearch").innerHTML = "";
   selectedCells = [];
   foundWords = [];
-  score = 0;
-  comboMultiplier = 1;
-  comboTimeLeft = 0;
-  updateScoreDisplay();
-  updateComboBar();
   stopTimer();
   initializeGame();
 }
