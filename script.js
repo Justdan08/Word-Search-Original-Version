@@ -15,9 +15,8 @@ document.addEventListener("DOMContentLoaded", initializeGame);
 document.getElementById("reset-button").addEventListener("click", resetGame);
 // script.js
 
-// Ensure settings apply on load
 document.addEventListener('DOMContentLoaded', () => {
-    initializeGame(); // Ensure this function exists
+    initializeGame(); // Ensure game starts
     updateSolvedWordStyle();
 
     // Apply saved dark mode setting
@@ -27,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create options menu
     createOptionsMenu();
+
+    // Ensure puzzle elements are properly positioned
+    positionElementsAbovePuzzle();
 });
 
 // Create and add options menu
