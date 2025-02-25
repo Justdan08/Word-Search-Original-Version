@@ -15,9 +15,11 @@ h1 {
 
 /* Grid */
 #wordsearch {
+  position: relative;
   display: grid;
   gap: 2px;
   margin: 20px auto; /* Center horizontally */
+  margin-top: 50px; /* Ensure the puzzle does not overlap the fixed elements */
   max-width: 95%;
   justify-content: center; /* Center grid columns */
   grid-template-columns: repeat(15, minmax(20px, 40px)); /* Flexible sizing */
