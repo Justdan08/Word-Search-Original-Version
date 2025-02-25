@@ -87,6 +87,22 @@ function updateSolvedWordStyle() {
 function toggleOptionsMenu() {
     document.getElementById('options-menu').classList.toggle('hidden');
 }
+// Function to position timer and combo meter above the puzzle
+function positionElementsAbovePuzzle() {
+    const puzzle = document.getElementById('wordsearch');
+    const timer = document.getElementById('timer');
+    const combo = document.getElementById('combo-container');
+
+    if (puzzle && timer && combo) {
+        const puzzleRect = puzzle.getBoundingClientRect();
+        timer.style.top = `${puzzleRect.top - 50}px`; // 10px above
+        combo.style.top = `${puzzleRect.top - 50}px`; // 10px above
+    }
+}
+
+// Reposition on load and on resize
+document.addEventListener('DOMContentLoaded', positionElementsAbovePuzzle);
+window.addEventListener('resize', positionElementsAbovePuzzle);
 
 // ========================
 // Timer Functions
