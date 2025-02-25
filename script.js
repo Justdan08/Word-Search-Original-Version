@@ -87,7 +87,7 @@ function updateSolvedWordStyle() {
 function toggleOptionsMenu() {
     document.getElementById('options-menu').classList.toggle('hidden');
 }
-// Function to position timer and combo meter above the puzzle
+// Function to position timer and combo meter correctly
 function positionElementsAbovePuzzle() {
     const puzzle = document.getElementById('wordsearch');
     const timer = document.getElementById('timer');
@@ -95,15 +95,16 @@ function positionElementsAbovePuzzle() {
 
     if (puzzle && timer && combo) {
         const puzzleRect = puzzle.getBoundingClientRect();
-        timer.style.top = `${puzzleRect.top - 50}px`; // 10px above
-        combo.style.top = `${puzzleRect.top - 50}px`; // 10px above
-    }
-}
+        
+        // Adjust Timer Position
+        timer.style.position = "absolute";
+        timer.style.top = `${puzzleRect.top - 50}px`; // 10px above puzzle
+        timer.style.left = `${puzzleRect.left}px`; // Aligned with puzzle
+        
 
 // Reposition on load and on resize
 document.addEventListener('DOMContentLoaded', positionElementsAbovePuzzle);
 window.addEventListener('resize', positionElementsAbovePuzzle);
-
 // ========================
 // Timer Functions
 // ========================
