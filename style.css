@@ -13,6 +13,11 @@ h1 {
   margin-bottom: 10px;
 }
 
+/* Define highlight color variable */
+:root {
+    --highlight-color: rgba(73, 132, 184, 0.5); /* Default blue */
+}
+
 /* Grid */
 #wordsearch {
   position: relative;
@@ -37,7 +42,7 @@ h1 {
 }
 
 .cell.selected {
-  background-color: rgba(73, 132, 184, 0.5); /* #4984B8 with 50% opacity */
+  background-color: var(--highlight-color); /* Use dynamic highlight color */
 }
 
 /* Word List */
@@ -65,6 +70,7 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
 }
+
 /* Position Timer at the top-left above the puzzle grid */
 #timer {
     position: absolute;
@@ -77,6 +83,7 @@ h1 {
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
+
 /* Ensure the puzzle container is positioned correctly */
 #wordsearch {
     position: relative;
@@ -102,6 +109,7 @@ h1 {
   color: #4984B8;
   text-decoration: none;
 }
+
 /* Hide options menu initially */
 .hidden {
     display: none;
@@ -155,7 +163,7 @@ h1 {
 }
 
 .highlight-style {
-    background-color: rgba(73, 132, 184, 0.5); /* Using existing blue from your code */
+    background-color: var(--highlight-color); /* Use dynamic highlight color */
     color: black;
 }
 
