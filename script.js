@@ -145,6 +145,10 @@ function initializeGame() {
   updateTimerDisplay();
   startTimer();
 
+ if (typeof gridSize === 'undefined') {
+    var gridSize = 15;
+}
+
   // Get the word pool from the HTML
   const wordPoolElement = document.getElementById("word-pool");
   const wordPool = JSON.parse(wordPoolElement.dataset.words);
