@@ -94,6 +94,79 @@ h1 {
   color: #4984B8;
   text-decoration: none;
 }
+/* Hide options menu initially */
+.hidden {
+    display: none;
+}
+
+/* Style for options container */
+#options-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+/* Style for the menu button */
+#options-button {
+    background: #4984B8;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Style for the menu */
+#options-menu {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    margin-top: 5px;
+}
+
+/* Dark mode adjustments */
+.dark-mode #options-menu {
+    background: #222;
+    color: #fff;
+}
+
+/* Word Found Styles */
+.original-style {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.bold-style {
+    font-weight: bold;
+    text-decoration: line-through;
+    color: black; /* Keeps text black */
+}
+
+.highlight-style {
+    background-color: rgba(73, 132, 184, 0.5); /* Using existing blue from your code */
+    color: black;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dark-mode .cell {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.dark-mode button {
+    background-color: #444;
+    color: white;
+}
 
 /* Mobile Optimization */
 @media (max-width: 600px) {
