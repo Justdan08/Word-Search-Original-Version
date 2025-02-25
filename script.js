@@ -15,9 +15,11 @@ document.addEventListener("DOMContentLoaded", initializeGame);
 document.getElementById("reset-button").addEventListener("click", resetGame);
 // script.js
 
+// Ensure settings apply on load
 document.addEventListener('DOMContentLoaded', () => {
-    initializeGame(); // Ensure game starts
+    initializeGame(); // Ensure this function exists
     updateSolvedWordStyle();
+    updateHighlightColor();
 
     // Apply saved dark mode setting
     if (localStorage.getItem('darkMode') === 'true') {
@@ -26,9 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create options menu
     createOptionsMenu();
-
-    // Ensure puzzle elements are properly positioned
-    positionElementsAbovePuzzle();
 });
 
 // Create and add options menu
@@ -43,6 +42,8 @@ function createOptionsMenu() {
             <button id="style-original">Original</button>
             <button id="style-bold">Bold</button>
             <button id="style-highlighted">Highlighted</button>
+            <h3>Highlight Color:</h3>
+            <input type="color" id="highlight-color-picker" value="#4984B8">
         </div>
     `;
     document.body.appendChild(container);
@@ -53,6 +54,7 @@ function createOptionsMenu() {
     document.getElementById('style-bold').addEventListener('click', () => changeSolvedWordStyle('bold'));
     document.getElementById('style-highlighted').addEventListener('click', () => changeSolvedWordStyle('highlighted'));
     document.getElementById('options-button').addEventListener('click', toggleOptionsMenu);
+    document.getElementById('highlight-color-picker').addEventListener('input', changeHighlightColor);
 }
 
 // Function to toggle dark mode
@@ -85,10 +87,24 @@ function updateSolvedWordStyle() {
     });
 }
 
+// Function to change highlight color
+function changeHighlightColor(event) {
+    const color = event.target.value;
+    localStorage.setItem('highlightColor', color);
+    updateHighlightColor();
+}
+
+// Apply stored highlight color to selection style
+function updateHighlightColor() {
+    const color = localStorage.getItem('highlightColor') || '#4984B8';
+    document.documentElement.style.setProperty('--highlight-color', color);
+}
+
 // Function to toggle options menu visibility
 function toggleOptionsMenu() {
     document.getElementById('options-menu').classList.toggle('hidden');
 }
+
 function positionElementsAbovePuzzle() {
     const puzzle = document.getElementById('wordsearch');
     const timer = document.getElementById('timer');
