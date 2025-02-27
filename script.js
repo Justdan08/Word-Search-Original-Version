@@ -76,7 +76,10 @@ function updateSolvedWordStyle() {
     const style = localStorage.getItem('solvedWordStyle') || 'original';
     
     words.forEach(word => {
+        // First remove existing puzzle cell styles
         word.classList.remove('bold-style', 'highlight-style', 'original-style');
+        
+        // Then apply selected style
         if (style === 'bold') {
             word.classList.add('bold-style');
         } else if (style === 'highlighted') {
@@ -85,8 +88,13 @@ function updateSolvedWordStyle() {
             word.classList.add('original-style');
         }
     });
-}
 
+    // Also update word list styles
+    document.querySelectorAll('#words div.found').forEach(word => {
+        word.classList.remove('bold-style', 'highlight-style', 'original-style');
+        word.classList.add(`${style}-style`);
+    });
+}
 // Function to change highlight color
 function changeHighlightColor(event) {
     const color = event.target.value;
@@ -178,6 +186,11 @@ function initializeGame() {
   // Clear the grid and word list
   wordsearch.innerHTML = "";
   wordsContainer.innerHTML = ""; // Clear the word list completely
+
+if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+    updateSolvedWordStyle();
 
   // Create the "Words to find" box
   const wordsBox = document.createElement("div");
@@ -392,6 +405,16 @@ function checkForWord() {
       }
       cell.classList.remove("selected");
     });
+
+foundWords.push(selectedWord);
+    selectedCells.forEach(cell => {
+        if (!cell.classList.contains("found")) {
+            cell.classList.add("found");
+        }
+        cell.classList.remove("selected");
+    });
+
+ updateSolvedWordStyle();
 
     document.querySelectorAll("#words div").forEach(el => {
       if (el.textContent === selectedWord) el.classList.add("found");

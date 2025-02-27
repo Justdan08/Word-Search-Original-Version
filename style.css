@@ -156,23 +156,25 @@ h1 {
     color: #888;
 }
 
+/* Add these to your CSS */
 .bold-style {
-    font-weight: bold;
+    font-weight: 900 !important;
     text-decoration: line-through;
-    color: black; /* Keeps text black */
 }
 
 .highlight-style {
-    background-color: var(--highlight-color); /* Use dynamic highlight color */
-    color: black;
+    background-color: rgba(73, 132, 184, 0.5) !important;
+    color: inherit !important;
 }
 
-/* Dark Mode Styles */
-body.dark-mode {
-    background-color: #121212;
-    color: #ffffff;
+.original-style {
+    text-decoration: line-through;
+    color: #888;
 }
 
+.dark-mode .original-style {
+    color: #aaa !important;
+}
 .dark-mode .cell {
     background-color: #1e1e1e;
     color: #ffffff;
