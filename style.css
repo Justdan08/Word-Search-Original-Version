@@ -163,9 +163,10 @@ h1 {
 }
 
 .highlight-style {
-    background-color: rgba(73, 132, 184, 0.5) !important;
-    color: inherit !important;
+  background-color: var(--highlight-color) !important;
+  color: inherit !important;
 }
+
 
 .original-style {
     text-decoration: line-through;
