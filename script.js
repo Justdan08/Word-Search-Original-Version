@@ -56,6 +56,17 @@ function createOptionsMenu() {
     document.getElementById('options-button').addEventListener('click', toggleOptionsMenu);
     document.getElementById('highlight-color-picker').addEventListener('input', changeHighlightColor);
 }
+const wordButtons = document.querySelectorAll('.options-menu button');
+
+wordButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Remove active class from all buttons
+    wordButtons.forEach(btn => btn.classList.remove('active'));
+    // Add active class to the clicked button
+    button.classList.add('active');
+  });
+});
+
 
 // Function to toggle dark mode
 function toggleDarkMode() {
