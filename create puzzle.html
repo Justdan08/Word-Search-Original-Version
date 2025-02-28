@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casual Word Search Puzzle Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Casual Word Search Puzzle Generator</h1>
+  <p>Customize your puzzle page below.</p>
+
+  <form id="puzzleForm">
+    <!-- File Title Field -->
+    <label for="fileTitle">File Title (for download):</label>
+    <input type="text" id="fileTitle" placeholder="e.g., my-puzzle.html">
+
+    <!-- Page Title Field -->
+    <label for="titleInput">Page Title:</label>
+    <input type="text" id="titleInput" placeholder="e.g., Marvel Word Search">
+
+    <!-- Main Heading Field -->
+    <label for="h1Input">Main Heading (H1):</label>
+    <input type="text" id="h1Input" placeholder="e.g., Marvel">
+
+    <!-- Navigation Link Options -->
+    <h2>Navigation Link Options</h2>
+    <label for="link1Option">Link 1:</label>
+    <select id="link1Option">
+      <option value="next" data-default-text="Next Puzzle" data-default-href="puzzle3.html">Next Puzzle</option>
+      <option value="back" data-default-text="Back to Menu" data-default-href="index.html">Back to Menu</option>
+      <option value="once" data-default-text="Once more with feeling!" data-default-href="puzzle1.HTML">Once more with feeling!</option>
+      <option value="previous" data-default-text="Previous Puzzle" data-default-href="puzzle2.html">Previous Puzzle</option>
+    </select>
+    <label for="link1Href">Link 1 URL:</label>
+    <input type="text" id="link1Href" placeholder="Leave empty for default">
+    
+    <label for="link2Option">Link 2:</label>
+    <select id="link2Option">
+      <option value="next" data-default-text="Next Puzzle" data-default-href="puzzle3.html">Next Puzzle</option>
+      <option value="back" data-default-text="Back to Menu" data-default-href="index.html">Back to Menu</option>
+      <option value="once" data-default-text="Once more with feeling!" data-default-href="puzzle1.HTML">Once more with feeling!</option>
+      <option value="previous" data-default-text="Previous Puzzle" data-default-href="puzzle2.html">Previous Puzzle</option>
+    </select>
+    <label for="link2Href">Link 2 URL:</label>
+    <input type="text" id="link2Href" placeholder="Leave empty for default">
+    
+    <!-- Word Pool Section -->
+    <h2>Word Pool</h2>
+    <label for="newWord">Add Word (or paste a formatted list):</label>
+    <input type="text" id="newWord" placeholder="Enter a word or paste list">
+    <button type="button" id="addWordBtn">Add Word</button>
+    <!-- This div displays words as "WORD", "WORD", ... if added individually, or as pasted -->
+    <div id="wordPoolDisplay" class="word-pool-display"></div>
+    
+    <!-- Finish Button -->
+    <button type="button" id="finishBtn">Finish</button>
+  </form>
+  
+  <!-- Modal Popup for Output -->
+  <div id="outputModal" class="modal">
+    <div class="modal-content">
+      <h2>Your Generated HTML</h2>
+      <p>Copy the code below or click Download to save the file.</p>
+      <textarea id="finalCode" readonly></textarea>
+      <div class="modal-buttons">
+        <button id="downloadBtn">Download HTML file</button>
+        <button id="closeModal">Close</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
