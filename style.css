@@ -133,6 +133,11 @@ h1 {
     cursor: pointer;
     border-radius: 5px;
 }
+.options-menu button.active {
+  background-color: #4984B8; /* Blue background */
+  color: white;              /* White text */
+}
+
 
 /* Style for the menu */
 #options-menu {
