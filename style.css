@@ -165,6 +165,7 @@ h1 {
 .bold-style {
     font-weight: 900 !important;
     text-decoration: line-through;
+    color: #333
 }
 
 .highlight-style {
