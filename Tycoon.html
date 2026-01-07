@@ -1188,6 +1188,70 @@
             box-shadow: 0 8px 30px rgba(255, 193, 7, 0.5);
         }
 
+        /* Welcome Modal */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .welcome-overlay.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .welcome-content {
+            text-align: center;
+            padding: 3rem;
+            max-width: 500px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+            border: 2px solid var(--accent-orange);
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(255, 107, 53, 0.3);
+        }
+
+        .welcome-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--accent-orange);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.8);
+        }
+
+        .welcome-text {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .btn-welcome-confirm {
+            padding: 1rem 2.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-welcome-confirm:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(255, 60, 60, 0.5);
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .main-container {
@@ -1664,6 +1728,14 @@
             <p class="prestige-details" id="prestige-details">You defeated X enemies!</p>
             <p class="prestige-bonus" id="prestige-bonus-display">New Multiplier: 1.00x</p>
             <button class="btn-prestige-confirm" onclick="confirmPrestige()">Continue</button>
+        </div>
+    </div>
+
+    <div class="welcome-overlay" id="welcome-overlay">
+        <div class="welcome-content">
+            <h2 class="welcome-title">📜 DRAFT DAY</h2>
+            <p class="welcome-text">Your home country has been taken over, no allies are coming to save you. Build your army from the ground up, take back your home, and take the fight to them!</p>
+            <button class="btn-welcome-confirm" onclick="dismissWelcome()">⚔️ Take Command</button>
         </div>
     </div>
 
@@ -2769,12 +2841,23 @@
         }
 
         // ==================== INITIALIZATION ====================
+        function dismissWelcome() {
+            document.getElementById('welcome-overlay').classList.remove('active');
+            localStorage.setItem('attackPowerTycoon_welcomed', 'true');
+        }
+
         function init() {
             // Try to load saved game with offline progress
             const saved = localStorage.getItem('attackPowerTycoon');
             if (saved) {
                 if (!calculateOfflineProgress()) {
                     loadGame();
+                }
+            } else {
+                // First time player - show welcome message
+                const welcomed = localStorage.getItem('attackPowerTycoon_welcomed');
+                if (!welcomed) {
+                    document.getElementById('welcome-overlay').classList.add('active');
                 }
             }
             
