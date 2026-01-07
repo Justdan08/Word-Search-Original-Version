@@ -130,6 +130,20 @@
             color: var(--accent-green);
         }
 
+        .stat-value.intel {
+            color: #9c27b0;
+            text-shadow: 0 0 10px rgba(156, 39, 176, 0.5);
+        }
+
+        .stat-value.intel-mult {
+            color: #9c27b0;
+        }
+
+        .stat-value.total-mult {
+            color: var(--accent-yellow);
+            text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
         .header-buttons {
             display: flex;
             gap: 0.5rem;
@@ -603,7 +617,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s;
+            gap: 1rem;
         }
 
         .enemy-card.defeated {
@@ -611,9 +625,20 @@
             border-color: var(--accent-green);
         }
 
-        .enemy-card.current {
+        .enemy-card.can-defeat {
             border-color: var(--accent-red);
-            box-shadow: 0 0 15px rgba(255, 60, 60, 0.3);
+            background: rgba(255, 60, 60, 0.1);
+        }
+
+        .enemy-card.current {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .enemy-rewards {
+            text-align: right;
+            font-size: 0.75rem;
+            line-height: 1.4;
         }
 
         .enemy-info h4 {
@@ -747,6 +772,106 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        /* Black Market */
+        .black-market-container {
+            background: var(--bg-card);
+            border: 1px solid #9c27b0;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .black-market-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .black-market-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #9c27b0;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(156, 39, 176, 0.5);
+        }
+
+        .intel-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 6px;
+            border: 1px solid #9c27b0;
+        }
+
+        .intel-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .intel-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: #9c27b0;
+            text-shadow: 0 0 10px rgba(156, 39, 176, 0.5);
+        }
+
+        .black-market-card {
+            background: var(--bg-dark);
+            border: 1px solid #9c27b0;
+            border-radius: 6px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .black-market-card:hover {
+            border-color: #ba68c8;
+            box-shadow: 0 0 15px rgba(156, 39, 176, 0.3);
+        }
+
+        .bm-upgrade-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            color: #ba68c8;
+        }
+
+        .bm-upgrade-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .bm-upgrade-level {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: #9c27b0;
+            margin-top: 0.25rem;
+        }
+
+        .btn-black-market {
+            padding: 0.5rem 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-black-market:hover:not(:disabled) {
+            background: linear-gradient(135deg, #ba68c8, #9c27b0);
+        }
+
+        .btn-black-market:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .shop-item-info h4 {
@@ -1281,16 +1406,24 @@
                     <span class="stat-value attack-power" id="attack-power">0</span>
                 </div>
                 <div class="stat-item">
+                    <span class="stat-label">Intel</span>
+                    <span class="stat-value intel" id="intel">0</span>
+                </div>
+                <div class="stat-item">
                     <span class="stat-label">Per Second</span>
                     <span class="stat-value" id="per-second">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Prestige Multiplier</span>
+                    <span class="stat-label">Prestige Mult</span>
                     <span class="stat-value multiplier" id="multiplier">1.00x</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Enemies Defeated</span>
-                    <span class="stat-value" id="enemies-defeated">0</span>
+                    <span class="stat-label">Intel Mult</span>
+                    <span class="stat-value intel-mult" id="intel-multiplier">1.00x</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Mult</span>
+                    <span class="stat-value total-mult" id="total-multiplier">1.00x</span>
                 </div>
             </div>
             <div class="header-buttons">
@@ -1307,6 +1440,7 @@
                 <button class="tab-btn active" data-tab="generators">🏭 Generators</button>
                 <button class="tab-btn" data-tab="upgrades">⬆️ Upgrades</button>
                 <button class="tab-btn" data-tab="shop">🛒 Shop</button>
+                <button class="tab-btn" data-tab="blackmarket">🕵️ Black Market</button>
                 <button class="tab-btn" data-tab="battle">⚔️ Battle</button>
             </div>
 
@@ -1329,12 +1463,28 @@
                 </div>
             </div>
 
+            <div id="blackmarket" class="tab-content">
+                <div class="black-market-container">
+                    <div class="black-market-header">
+                        <h2>🕵️ BLACK MARKET</h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Spend Intel to purchase permanent production upgrades that persist through prestige!
+                        </p>
+                        <div class="intel-display">
+                            <span class="intel-label">Available Intel:</span>
+                            <span class="intel-value" id="black-market-intel">0</span>
+                        </div>
+                    </div>
+                    <div id="black-market-grid" class="upgrades-grid"></div>
+                </div>
+            </div>
+
             <div id="battle" class="tab-content">
                 <div class="battle-container">
                     <div class="battle-header">
                         <h2>⚔️ BATTLE ARENA</h2>
                         <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                            Spend your Attack Power to defeat enemies and earn permanent multipliers!
+                            Defeat enemies to earn Intel and permanent Prestige multipliers! Enemies respawn each battle.
                         </p>
                         <div class="battle-stats">
                             <div class="battle-stat">
@@ -1342,8 +1492,8 @@
                                 <div class="battle-stat-value" id="battle-power">0</div>
                             </div>
                             <div class="battle-stat">
-                                <div class="battle-stat-label">Potential Bonus</div>
-                                <div class="battle-stat-value" id="potential-bonus">+0%</div>
+                                <div class="battle-stat-label">Potential Intel</div>
+                                <div class="battle-stat-value" id="potential-bonus">+0 Intel</div>
                             </div>
                         </div>
                     </div>
@@ -1395,7 +1545,7 @@
         // ==================== GAME DATA ====================
         const GENERATORS = [
             { id: 0, name: "New Recruit", icon: "🎖️", baseCost: 10, baseProduction: 1, unlockCost: 0, baseTime: 3 },
-            { id: 1, name: "Gunsmith", icon: "🔫", baseCost: 100, baseProduction: 5, unlockCost: 500, baseTime: 10 },
+            { id: 1, name: "Gunsmith", icon: "🔫", baseCost: 100, baseProduction: 8, unlockCost: 500, baseTime: 10 },
             { id: 2, name: "Combat Training", icon: "🎯", baseCost: 1000, baseProduction: 40, unlockCost: 5000, baseTime: 20 },
             { id: 3, name: "Vehicle Workshop", icon: "🚛", baseCost: 10000, baseProduction: 200, unlockCost: 50000, baseTime: 35 },
             { id: 4, name: "Mobile Command Base", icon: "📡", baseCost: 100000, baseProduction: 1000, unlockCost: 500000, baseTime: 55 },
@@ -1426,21 +1576,21 @@
         }
 
         const ENEMIES = [
-            { name: "Scout Patrol", hp: 5000, reward: 0.05 },
-            { name: "Guard Post", hp: 25000, reward: 0.05 },
-            { name: "Outpost", hp: 150000, reward: 0.10 },
-            { name: "Watchtower", hp: 750000, reward: 0.10 },
-            { name: "Bunker", hp: 4000000, reward: 0.15 },
-            { name: "Forward Base", hp: 20000000, reward: 0.15 },
-            { name: "Military Camp", hp: 100000000, reward: 0.20 },
-            { name: "Armored Division", hp: 500000000, reward: 0.20 },
-            { name: "Fortress", hp: 2500000000, reward: 0.25 },
-            { name: "Command Center", hp: 12000000000, reward: 0.25 },
-            { name: "Underground Complex", hp: 60000000000, reward: 0.30 },
-            { name: "Nuclear Silo", hp: 300000000000, reward: 0.30 },
-            { name: "Orbital Station", hp: 1500000000000, reward: 0.35 },
-            { name: "Moon Base", hp: 8000000000000, reward: 0.35 },
-            { name: "Death Star", hp: 50000000000000, reward: 0.50 }
+            { name: "Scout Patrol", hp: 5000, reward: 0.05, intel: 1 },
+            { name: "Guard Post", hp: 25000, reward: 0.05, intel: 2 },
+            { name: "Outpost", hp: 150000, reward: 0.10, intel: 5 },
+            { name: "Watchtower", hp: 750000, reward: 0.10, intel: 10 },
+            { name: "Bunker", hp: 4000000, reward: 0.15, intel: 25 },
+            { name: "Forward Base", hp: 20000000, reward: 0.15, intel: 50 },
+            { name: "Military Camp", hp: 100000000, reward: 0.20, intel: 100 },
+            { name: "Armored Division", hp: 500000000, reward: 0.20, intel: 250 },
+            { name: "Fortress", hp: 2500000000, reward: 0.25, intel: 500 },
+            { name: "Command Center", hp: 12000000000, reward: 0.25, intel: 1000 },
+            { name: "Underground Complex", hp: 60000000000, reward: 0.30, intel: 2500 },
+            { name: "Nuclear Silo", hp: 300000000000, reward: 0.30, intel: 5000 },
+            { name: "Orbital Station", hp: 1500000000000, reward: 0.35, intel: 10000 },
+            { name: "Moon Base", hp: 8000000000000, reward: 0.35, intel: 25000 },
+            { name: "Death Star", hp: 50000000000000, reward: 0.50, intel: 100000 }
         ];
 
         // ==================== GAME STATE ====================
@@ -1448,6 +1598,11 @@
             attackPower: 10,
             totalEarned: 0,
             prestigeMultiplier: 1,
+            prestigeMultiplierLocked: false,
+            intel: 0,
+            totalIntel: 0,
+            intelMultiplier: 1,
+            blackMarketUpgrades: GENERATORS.map(() => 0),
             enemiesDefeated: 0,
             battlesWon: 0,
             playTime: 0,
@@ -1514,7 +1669,9 @@
             const productionUpgrades = Math.floor((state.upgradeTier + 1) / 2);
             const upgradeMultiplier = 1 + (productionUpgrades * 0.75);
             const speedMultiplier = 1 + (gameState.speedBonuses[genIndex] * 0.5);
-            return gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * gameState.prestigeMultiplier;
+            // Black market bonus: 10% per level
+            const blackMarketMultiplier = 1 + (gameState.blackMarketUpgrades[genIndex] * 0.1);
+            return gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * blackMarketMultiplier * gameState.prestigeMultiplier;
         }
 
         function getGeneratorTime(genIndex) {
@@ -1527,6 +1684,35 @@
             // Speed bonuses from shop also reduce time
             const shopSpeedBonus = 1 / (1 + (gameState.speedBonuses[genIndex] * 0.25));
             return gen.baseTime * speedReduction * shopSpeedBonus;
+        }
+
+        function getIntelMultiplier() {
+            let total = 1;
+            for (let i = 0; i < GENERATORS.length; i++) {
+                total += gameState.blackMarketUpgrades[i] * 0.1;
+            }
+            return total;
+        }
+
+        function getTotalMultiplier() {
+            return gameState.prestigeMultiplier * getIntelMultiplier();
+        }
+
+        function getBlackMarketCost(genIndex) {
+            const level = gameState.blackMarketUpgrades[genIndex];
+            const baseCost = 10 * (genIndex + 1);
+            return Math.floor(baseCost * Math.pow(2, level));
+        }
+
+        function buyBlackMarketUpgrade(genIndex) {
+            if (!canPurchase('bm-' + genIndex)) return;
+            const cost = getBlackMarketCost(genIndex);
+            if (gameState.intel >= cost) {
+                gameState.intel -= cost;
+                gameState.blackMarketUpgrades[genIndex]++;
+                showToast(`🕵️ ${GENERATORS[genIndex].name} Intel Boost upgraded to Level ${gameState.blackMarketUpgrades[genIndex]}!`);
+                updateUI();
+            }
         }
 
         function getTotalProduction() {
@@ -1641,15 +1827,30 @@
         function calculateBattleResults() {
             let power = gameState.attackPower;
             let defeated = 0;
-            let currentEnemy = gameState.enemiesDefeated;
+            let intelEarned = 0;
+            let prestigeGained = 0;
+            let currentEnemy = 0;
             
+            // Go through all enemies, they respawn each battle
             while (currentEnemy < ENEMIES.length && power >= ENEMIES[currentEnemy].hp) {
                 power -= ENEMIES[currentEnemy].hp;
+                intelEarned += ENEMIES[currentEnemy].intel;
+                
+                // Only grant prestige bonus if not already earned
+                if (currentEnemy >= gameState.enemiesDefeated) {
+                    prestigeGained += ENEMIES[currentEnemy].reward;
+                }
+                
                 defeated++;
                 currentEnemy++;
             }
             
-            return { defeated, newTotal: gameState.enemiesDefeated + defeated };
+            return { 
+                defeated, 
+                intelEarned, 
+                prestigeGained,
+                newPrestigeLevel: Math.max(gameState.enemiesDefeated, currentEnemy)
+            };
         }
 
         function calculatePrestigeMultiplier(enemiesDefeated) {
@@ -1673,22 +1874,30 @@
             const details = document.getElementById('prestige-details');
             const bonusDisplay = document.getElementById('prestige-bonus-display');
             
-            const newMultiplier = calculatePrestigeMultiplier(results.newTotal);
+            const newMultiplier = calculatePrestigeMultiplier(results.newPrestigeLevel);
+            const prestigeText = results.prestigeGained > 0 
+                ? `New Prestige Multiplier: ${newMultiplier.toFixed(2)}x (+${(results.prestigeGained * 100).toFixed(0)}%)`
+                : `Prestige Multiplier: ${gameState.prestigeMultiplier.toFixed(2)}x (no new bonus)`;
             
-            details.textContent = `You defeated ${results.defeated} enemies!`;
-            bonusDisplay.textContent = `New Multiplier: ${newMultiplier.toFixed(2)}x`;
+            details.innerHTML = `You defeated ${results.defeated} enemies!<br><span style="color: #9c27b0;">+${formatNumber(results.intelEarned)} Intel earned!</span>`;
+            bonusDisplay.innerHTML = prestigeText;
             
             overlay.classList.add('active');
             
             // Store results for confirmation
             window.pendingPrestige = {
-                enemiesDefeated: results.newTotal,
-                multiplier: newMultiplier
+                enemiesDefeated: results.newPrestigeLevel,
+                multiplier: newMultiplier,
+                intelEarned: results.intelEarned
             };
         }
 
         function confirmPrestige() {
             const prestige = window.pendingPrestige;
+            
+            // Add intel earned
+            gameState.intel += prestige.intelEarned;
+            gameState.totalIntel += prestige.intelEarned;
             
             // Reset generators but start with 10 AP
             gameState.attackPower = 10;
@@ -1701,16 +1910,18 @@
             }));
             gameState.generatorProgress = GENERATORS.map(() => 0);
             
-            // Keep shop upgrades (autoClickers and speedBonuses)
-            // Update prestige stats
-            gameState.enemiesDefeated = prestige.enemiesDefeated;
-            gameState.prestigeMultiplier = prestige.multiplier;
+            // Keep: autoClickers, speedBonuses, blackMarketUpgrades, intel
+            // Update prestige stats (only if new enemies defeated)
+            if (prestige.enemiesDefeated > gameState.enemiesDefeated) {
+                gameState.enemiesDefeated = prestige.enemiesDefeated;
+                gameState.prestigeMultiplier = prestige.multiplier;
+            }
             gameState.battlesWon++;
             
             // Hide overlay
             document.getElementById('prestige-overlay').classList.remove('active');
             
-            showToast(`🎖️ Prestige complete! New multiplier: ${prestige.multiplier.toFixed(2)}x`);
+            showToast(`🎖️ Battle complete! +${formatNumber(prestige.intelEarned)} Intel earned!`);
             updateUI();
         }
 
@@ -1912,24 +2123,62 @@
             });
         }
 
+        function renderBlackMarket() {
+            const grid = document.getElementById('black-market-grid');
+            grid.innerHTML = '';
+            document.getElementById('black-market-intel').textContent = formatNumber(gameState.intel);
+            
+            GENERATORS.forEach((gen, i) => {
+                const level = gameState.blackMarketUpgrades[i];
+                const cost = getBlackMarketCost(i);
+                const canBuy = gameState.intel >= cost;
+                const currentBonus = level * 10;
+                const nextBonus = (level + 1) * 10;
+                
+                grid.innerHTML += `
+                    <div class="black-market-card">
+                        <div class="bm-upgrade-info">
+                            <h4>${gen.icon} ${gen.name} Intel Boost</h4>
+                            <p>+10% production per level</p>
+                            <div class="bm-upgrade-level">Level ${level} (Current: +${currentBonus}% → Next: +${nextBonus}%)</div>
+                        </div>
+                        <button class="btn-black-market" 
+                            ${!canBuy ? 'disabled' : ''} 
+                            data-action="buy-blackmarket" data-index="${i}">
+                            ${formatNumber(cost)} Intel
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
         function renderBattle() {
             const list = document.getElementById('enemies-list');
             list.innerHTML = '';
             
             const results = calculateBattleResults();
-            let powerLeft = gameState.attackPower;
             
             ENEMIES.forEach((enemy, i) => {
-                const defeated = i < gameState.enemiesDefeated;
-                const current = i === gameState.enemiesDefeated;
-                const canDamage = i >= gameState.enemiesDefeated && i < gameState.enemiesDefeated + results.defeated + 1;
+                const hasPrestigeBonus = i < gameState.enemiesDefeated;
+                const canDefeat = i < results.defeated;
                 
                 let hpPercent = 100;
-                if (defeated) {
-                    hpPercent = 0;
-                } else if (current || canDamage) {
+                if (canDefeat) {
                     let damage = 0;
-                    for (let j = gameState.enemiesDefeated; j < i; j++) {
+                    for (let j = 0; j < i; j++) {
+                        damage += ENEMIES[j].hp;
+                    }
+                    const remainingPower = gameState.attackPower - damage;
+                    if (remainingPower >= enemy.hp) {
+                        hpPercent = 0;
+                    } else if (remainingPower > 0) {
+                        const hpLeft = Math.max(0, enemy.hp - remainingPower);
+                        hpPercent = (hpLeft / enemy.hp) * 100;
+                    }
+                } else if (i === results.defeated && results.defeated > 0) {
+                    // Partial damage on next enemy
+                    let damage = 0;
+                    for (let j = 0; j < i; j++) {
                         damage += ENEMIES[j].hp;
                     }
                     const remainingPower = gameState.attackPower - damage;
@@ -1939,24 +2188,33 @@
                     }
                 }
                 
+                const prestigeText = hasPrestigeBonus 
+                    ? `<span style="color: var(--accent-green);">✓ Prestige Earned</span>` 
+                    : `<span style="color: var(--accent-green);">+${(enemy.reward * 100).toFixed(0)}% Prestige</span>`;
+                
                 list.innerHTML += `
-                    <div class="enemy-card ${defeated ? 'defeated' : ''} ${current ? 'current' : ''}">
+                    <div class="enemy-card ${canDefeat ? 'can-defeat' : ''} ${i === 0 ? 'current' : ''}">
                         <div class="enemy-info" style="flex: 1;">
-                            <h4>${defeated ? '💀' : current ? '⚔️' : '🎯'} ${enemy.name}</h4>
+                            <h4>${canDefeat ? '💀' : '🎯'} ${enemy.name}</h4>
                             <div class="enemy-hp">HP: ${formatNumber(enemy.hp)}</div>
                             <div class="hp-bar">
                                 <div class="hp-fill" style="width: ${hpPercent}%"></div>
                             </div>
                         </div>
-                        <div class="enemy-reward">+${(enemy.reward * 100).toFixed(0)}%</div>
+                        <div class="enemy-rewards">
+                            ${prestigeText}<br>
+                            <span style="color: #9c27b0;">+${formatNumber(enemy.intel)} Intel</span>
+                        </div>
                     </div>
+                `;
+</div>
                 `;
             });
             
             document.getElementById('battle-power').textContent = formatNumber(gameState.attackPower);
-            document.getElementById('potential-bonus').textContent = results.defeated > 0 
-                ? `+${((calculatePrestigeMultiplier(results.newTotal) - gameState.prestigeMultiplier) * 100).toFixed(0)}%`
-                : '+0%';
+            document.getElementById('potential-bonus').textContent = results.intelEarned > 0 
+                ? `+${formatNumber(results.intelEarned)} Intel`
+                : '+0 Intel';
             document.getElementById('btn-battle').disabled = results.defeated === 0;
         }
 
@@ -1992,9 +2250,11 @@
 
         function updateStats() {
             document.getElementById('attack-power').textContent = formatNumber(gameState.attackPower);
+            document.getElementById('intel').textContent = formatNumber(gameState.intel);
             document.getElementById('per-second').textContent = formatNumber(getTotalProduction());
             document.getElementById('multiplier').textContent = gameState.prestigeMultiplier.toFixed(2) + 'x';
-            document.getElementById('enemies-defeated').textContent = gameState.enemiesDefeated;
+            document.getElementById('intel-multiplier').textContent = getIntelMultiplier().toFixed(2) + 'x';
+            document.getElementById('total-multiplier').textContent = getTotalMultiplier().toFixed(2) + 'x';
             document.getElementById('stat-total-earned').textContent = formatNumber(gameState.totalEarned);
             document.getElementById('stat-battles-won').textContent = gameState.battlesWon;
             
@@ -2010,6 +2270,7 @@
             renderGenerators();
             renderUpgrades();
             renderShop();
+            renderBlackMarket();
             renderBattle();
             renderProductionSummary();
         }
@@ -2070,6 +2331,7 @@
                 renderGenerators();
                 renderUpgrades();
                 renderShop();
+                renderBlackMarket();
                 renderBattle();
                 renderProductionSummary();
             }
@@ -2129,6 +2391,9 @@
                     break;
                 case 'buy-speed':
                     buySpeedBonus(index);
+                    break;
+                case 'buy-blackmarket':
+                    buyBlackMarketUpgrade(index);
                     break;
                 default:
                     return false;
