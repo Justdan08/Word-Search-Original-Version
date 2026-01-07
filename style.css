@@ -1,7 +1,7 @@
 /* General Styles */
 body {
-  font-family: 'Georgia', serif;
-  background-color: white;
+  font-family: 'Quicksand', 'Nunito', sans-serif;
+  background-color: #e8f5e9; /* Soft green background */
   text-align: center;
   margin: 0;
   padding: 10px;
@@ -11,6 +11,7 @@ h1 {
   font-size: 24px;
   color: #333;
   margin-bottom: 10px;
+  font-family: 'Quicksand', 'Nunito', sans-serif;
 }
 
 /* Define highlight color variable */
@@ -28,6 +29,10 @@ h1 {
   max-width: 95%;
   justify-content: center; /* Center grid columns */
   grid-template-columns: repeat(15, minmax(20px, 40px)); /* Flexible sizing */
+  padding: 15px;
+  background-color: white;
+  border-radius: 20px; /* More rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .cell {
@@ -38,7 +43,9 @@ h1 {
   align-items: center;
   justify-content: center;
   background-color: white;
+  color: black; /* Keep text black */
   user-select: none;
+  border-radius: 4px; /* Slightly rounded cell corners */
 }
 
 .cell.selected {
@@ -49,6 +56,7 @@ h1 {
 #word-list {
   margin: 10px;
   font-size: 16px;
+  font-family: 'Quicksand', 'Nunito', sans-serif;
 }
 
 #word-list div {
@@ -67,8 +75,14 @@ h1 {
   background-color: #4984B8;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px; /* Rounded button corners */
   cursor: pointer;
+  font-family: 'Quicksand', 'Nunito', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+#reset-button:hover {
+  background-color: #3a6d9e;
 }
 
 /* Position Timer at the top-left above the puzzle grid */
@@ -78,10 +92,11 @@ h1 {
     left: 20px; /* Adjusted for alignment */
     font-size: 24px;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.9);
     padding: 5px 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    font-family: 'Quicksand', 'Nunito', sans-serif;
 }
 
 /* Ensure the puzzle container is positioned correctly */
@@ -101,13 +116,20 @@ h1 {
   background-color: #4984B8;
   color: white;
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 8px; /* Rounded link buttons */
+  font-family: 'Quicksand', 'Nunito', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.puzzle-link:hover {
+  background-color: #3a6d9e;
 }
 
 .nav-links a {
   margin: 0 10px;
   color: #4984B8;
   text-decoration: none;
+  font-family: 'Quicksand', 'Nunito', sans-serif;
 }
 
 /* Hide options menu initially */
@@ -131,28 +153,43 @@ h1 {
     padding: 10px;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px; /* Rounded button */
+    font-family: 'Quicksand', 'Nunito', sans-serif;
 }
+
 .options-menu button.active {
   background-color: #4984B8; /* Blue background */
   color: white;              /* White text */
 }
-
 
 /* Style for the menu */
 #options-menu {
     background: white;
     border: 1px solid #ccc;
     padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px; /* Rounded menu */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     margin-top: 5px;
+    font-family: 'Quicksand', 'Nunito', sans-serif;
+}
+
+#options-menu button {
+  border-radius: 6px; /* Rounded menu buttons */
+  font-family: 'Quicksand', 'Nunito', sans-serif;
 }
 
 /* Dark mode adjustments */
+.dark-mode {
+  background-color: #1a2f1a; /* Dark green background for dark mode */
+}
+
 .dark-mode #options-menu {
     background: #222;
     color: #fff;
+}
+
+.dark-mode #wordsearch {
+  background-color: #2a2a2a;
 }
 
 /* Word Found Styles */
@@ -173,7 +210,6 @@ h1 {
   color: inherit !important;
 }
 
-
 .original-style {
     text-decoration: line-through;
     color: #888;
@@ -182,6 +218,7 @@ h1 {
 .dark-mode .original-style {
     color: #aaa !important;
 }
+
 .dark-mode .cell {
     background-color: #1e1e1e;
     color: #ffffff;
