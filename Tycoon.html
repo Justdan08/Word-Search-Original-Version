@@ -34,6 +34,12 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -41,7 +47,9 @@
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         /* Animated background */
@@ -1266,224 +1274,298 @@
         }
 
         @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+
             .header {
-                padding: 0.75rem 1rem;
+                padding: 0.5rem 0.75rem;
+                position: relative;
             }
 
             .header-content {
                 flex-direction: column;
                 text-align: center;
-                gap: 0.75rem;
+                gap: 0.5rem;
             }
 
             .game-title {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
                 letter-spacing: 1px;
             }
 
             .stats-bar {
-                justify-content: center;
-                gap: 1rem;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.4rem;
                 width: 100%;
             }
 
             .stat-item {
-                min-width: 70px;
+                min-width: unset;
+                padding: 0.3rem;
+                background: var(--bg-dark);
+                border-radius: 4px;
             }
 
             .stat-label {
-                font-size: 0.6rem;
+                font-size: 0.55rem;
             }
 
             .stat-value {
-                font-size: 1.1rem;
+                font-size: 0.9rem;
             }
 
             .header-buttons {
                 width: 100%;
                 justify-content: center;
+                gap: 0.5rem;
             }
 
             .btn-header {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.8rem;
+                padding: 0.4rem 0.6rem;
+                font-size: 0.7rem;
             }
 
             .main-container {
-                padding: 0.75rem;
-                gap: 1rem;
+                padding: 0.5rem;
+                gap: 0.75rem;
+            }
+
+            .content-area {
+                min-width: 0;
             }
 
             .tabs {
-                display: flex;
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
                 gap: 0.25rem;
-                overflow-x: auto;
-                padding-bottom: 0.5rem;
-                -webkit-overflow-scrolling: touch;
+                padding-bottom: 0.25rem;
             }
 
             .tab-btn {
-                padding: 0.6rem 0.75rem;
-                font-size: 0.7rem;
+                padding: 0.5rem 0.25rem;
+                font-size: 0.6rem;
                 white-space: nowrap;
                 flex-shrink: 0;
             }
 
             .generators-grid {
                 grid-template-columns: 1fr;
-                gap: 0.75rem;
+                gap: 0.5rem;
             }
 
             .generator-card {
-                padding: 1rem;
+                padding: 0.75rem;
+            }
+
+            .generator-header {
+                gap: 0.5rem;
             }
 
             .generator-name {
-                font-size: 0.95rem;
+                font-size: 0.9rem;
             }
 
             .generator-tier {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
 
             .generator-icon {
-                font-size: 1.5rem;
-                width: 40px;
-                height: 40px;
+                font-size: 1.3rem;
+                width: 36px;
+                height: 36px;
             }
 
             .generator-click-btn {
-                width: 55px;
-                height: 55px;
-                font-size: 1.5rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.4rem;
             }
 
             .generator-click-btn .click-value {
-                font-size: 0.5rem;
+                font-size: 0.45rem;
+            }
+
+            .generator-progress {
+                height: 6px;
             }
 
             .generator-stats {
-                padding: 0.5rem;
-                margin-bottom: 0.75rem;
+                padding: 0.4rem;
+                margin-bottom: 0.5rem;
+                gap: 0.5rem;
             }
 
             .gen-stat-label {
-                font-size: 0.6rem;
+                font-size: 0.55rem;
             }
 
             .gen-stat-value {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
             }
 
             .generator-actions {
-                gap: 0.4rem;
+                gap: 0.3rem;
             }
 
             .btn-generator {
-                padding: 0.75rem 0.5rem;
-                font-size: 0.8rem;
-                min-height: 54px;
+                padding: 0.6rem 0.4rem;
+                font-size: 0.7rem;
+                min-height: 48px;
             }
 
             .btn-cost {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
+            }
+
+            .upgrades-section {
+                margin-bottom: 1rem;
+            }
+
+            .upgrades-section h3 {
+                font-size: 0.85rem;
+                margin-bottom: 0.5rem;
             }
 
             .upgrades-grid {
                 grid-template-columns: 1fr;
-                gap: 0.5rem;
+                gap: 0.4rem;
             }
 
             .upgrade-card {
-                padding: 0.75rem;
+                padding: 0.6rem;
             }
 
             .upgrade-info h4 {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
 
             .upgrade-info p {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
 
             .btn-upgrade-buy {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.75rem;
-            }
-
-            .upgrades-section h3 {
-                font-size: 0.9rem;
+                padding: 0.5rem 0.6rem;
+                font-size: 0.7rem;
             }
 
             .sidebar {
                 grid-template-columns: 1fr;
+                gap: 0.5rem;
             }
 
             .sidebar-panel {
-                padding: 0.75rem;
+                padding: 0.6rem;
             }
 
             .sidebar-panel h3 {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
+                margin-bottom: 0.4rem;
             }
 
             .production-item {
-                font-size: 0.75rem;
-                padding: 0.4rem;
+                font-size: 0.7rem;
+                padding: 0.3rem;
+            }
+
+            .stat-row {
+                padding: 0.3rem 0;
+                font-size: 0.7rem;
             }
 
             .battle-container {
-                padding: 1rem;
-            }
-
-            .battle-header h2 {
-                font-size: 1.2rem;
-            }
-
-            .battle-stats {
-                gap: 1rem;
-            }
-
-            .battle-stat-value {
-                font-size: 1rem;
-            }
-
-            .enemies-list {
-                max-height: 300px;
-            }
-
-            .enemy-card {
                 padding: 0.75rem;
             }
 
-            .enemy-info h4 {
-                font-size: 0.85rem;
-            }
-
-            .btn-battle {
-                padding: 0.85rem;
-                font-size: 0.95rem;
-            }
-
-            .prestige-content {
-                padding: 1.5rem;
-            }
-
-            .prestige-title {
-                font-size: 2rem;
-            }
-
-            .prestige-details {
+            .battle-header h2 {
                 font-size: 1rem;
             }
 
+            .battle-header p {
+                font-size: 0.7rem;
+            }
+
+            .battle-stats {
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+
+            .battle-stat {
+                padding: 0.5rem;
+            }
+
+            .battle-stat-label {
+                font-size: 0.6rem;
+            }
+
+            .battle-stat-value {
+                font-size: 0.9rem;
+            }
+
+            .enemies-list {
+                max-height: 250px;
+            }
+
+            .enemy-card {
+                padding: 0.6rem;
+                gap: 0.5rem;
+            }
+
+            .enemy-info h4 {
+                font-size: 0.75rem;
+            }
+
+            .enemy-hp {
+                font-size: 0.6rem;
+            }
+
+            .enemy-rewards {
+                font-size: 0.6rem;
+            }
+
+            .hp-bar {
+                height: 4px;
+            }
+
+            .btn-battle {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .prestige-content,
+            .welcome-content {
+                padding: 1.25rem;
+                margin: 1rem;
+                max-width: calc(100vw - 2rem);
+            }
+
+            .prestige-title {
+                font-size: 1.75rem;
+            }
+
+            .welcome-title {
+                font-size: 1.75rem;
+            }
+
+            .prestige-details,
+            .welcome-text {
+                font-size: 0.9rem;
+            }
+
             .prestige-bonus {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
+            }
+
+            .btn-prestige-confirm,
+            .btn-welcome-confirm {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.85rem;
             }
 
             .toast {
-                padding: 0.75rem 1rem;
-                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.75rem;
             }
 
             .toast-container {
@@ -1491,42 +1573,165 @@
                 right: 10px;
                 left: 10px;
             }
-        }
 
-        @media (max-width: 400px) {
-            .game-title {
-                font-size: 1.1rem;
-            }
-
-            .stats-bar {
-                gap: 0.5rem;
-            }
-
-            .stat-item {
-                min-width: 60px;
-            }
-
-            .stat-value {
-                font-size: 0.95rem;
-            }
-
-            .tab-btn {
-                padding: 0.5rem 0.6rem;
-                font-size: 0.65rem;
-            }
-
-            .generator-card {
+            /* Call to Arms mobile */
+            .call-to-arms-container {
                 padding: 0.75rem;
             }
 
-            .generator-name {
+            .call-to-arms-header {
+                flex-direction: column;
+                gap: 0.25rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .call-to-arms-title {
                 font-size: 0.85rem;
             }
 
-            .btn-generator {
-                padding: 0.6rem 0.4rem;
+            .call-to-arms-status {
+                font-size: 0.7rem;
+            }
+
+            .call-to-arms-actions {
+                flex-direction: column;
+                gap: 0.4rem;
+            }
+
+            .btn-call-to-arms {
+                padding: 0.6rem;
                 font-size: 0.75rem;
-                min-height: 50px;
+            }
+
+            .btn-cta-upgrade {
+                padding: 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            /* Black Market mobile */
+            .black-market-container {
+                padding: 0.75rem;
+            }
+
+            .black-market-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .intel-display {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+
+            .intel-label {
+                font-size: 0.75rem;
+            }
+
+            .intel-value {
+                font-size: 1rem;
+            }
+
+            .black-market-card {
+                padding: 0.6rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+
+            .bm-upgrade-info h4 {
+                font-size: 0.8rem;
+            }
+
+            .bm-upgrade-info p {
+                font-size: 0.65rem;
+            }
+
+            .bm-upgrade-level {
+                font-size: 0.6rem;
+            }
+
+            .btn-black-market {
+                padding: 0.5rem;
+                font-size: 0.75rem;
+                width: 100%;
+            }
+
+            /* Locked placeholder mobile */
+            .locked-placeholder {
+                padding: 1.25rem;
+            }
+
+            .locked-placeholder .lock-icon {
+                font-size: 2rem;
+            }
+
+            .locked-placeholder .lock-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            html {
+                font-size: 13px;
+            }
+
+            .game-title {
+                font-size: 1rem;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+            }
+
+            .stat-label {
+                font-size: 0.5rem;
+            }
+
+            .stat-value {
+                font-size: 0.8rem;
+            }
+
+            .tabs {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .tab-btn {
+                padding: 0.4rem 0.2rem;
+                font-size: 0.55rem;
+            }
+
+            .generator-card {
+                padding: 0.6rem;
+            }
+
+            .generator-name {
+                font-size: 0.8rem;
+            }
+
+            .generator-click-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
+            }
+
+            .btn-generator {
+                padding: 0.5rem 0.3rem;
+                font-size: 0.65rem;
+                min-height: 44px;
+            }
+
+            .welcome-content,
+            .prestige-content {
+                padding: 1rem;
+            }
+
+            .welcome-title,
+            .prestige-title {
+                font-size: 1.5rem;
+            }
+
+            .welcome-text {
+                font-size: 0.85rem;
             }
         }
 
