@@ -879,6 +879,131 @@
             cursor: not-allowed;
         }
 
+        /* Call to Arms */
+        .call-to-arms-container {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-orange);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .call-to-arms-container.active {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.3);
+            animation: pulse-cta 1s infinite;
+        }
+
+        @keyframes pulse-cta {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 230, 118, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(0, 230, 118, 0.5); }
+        }
+
+        .call-to-arms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .call-to-arms-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--accent-orange);
+        }
+
+        .call-to-arms-container.active .call-to-arms-title {
+            color: var(--accent-green);
+        }
+
+        .call-to-arms-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .call-to-arms-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-call-to-arms {
+            flex: 1;
+            padding: 0.75rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-call-to-arms:hover:not(:disabled) {
+            filter: brightness(1.1);
+        }
+
+        .btn-call-to-arms:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-call-to-arms.active {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+        }
+
+        .btn-cta-upgrade {
+            padding: 0.75rem 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            background: #9c27b0;
+            color: white;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-cta-upgrade:hover:not(:disabled) {
+            background: #ba68c8;
+        }
+
+        .btn-cta-upgrade:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Locked Generator Card */
+        .generator-card.fully-locked {
+            background: var(--bg-dark);
+            border: 1px dashed var(--border-color);
+            opacity: 0.6;
+        }
+
+        .generator-card.fully-locked .generator-name {
+            color: var(--text-muted);
+        }
+
+        .locked-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .locked-placeholder .lock-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .locked-placeholder .lock-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
         .shop-item-info h4 {
             font-size: 0.85rem;
             margin-bottom: 0.2rem;
@@ -1615,6 +1740,13 @@
             totalIntel: 0,
             intelMultiplier: 1,
             blackMarketUpgrades: GENERATORS.map(() => 0),
+            callToArms: {
+                unlocked: false,
+                active: false,
+                activeUntil: 0,
+                cooldownUntil: 0,
+                durationUpgrades: 0
+            },
             enemiesDefeated: 0,
             battlesWon: 0,
             playTime: 0,
@@ -1709,7 +1841,11 @@
             
             // Speed bonuses from shop also reduce time
             const shopSpeedBonus = 1 / (1 + (gameState.speedBonuses[genIndex] * 0.25));
-            return gen.baseTime * speedMultiplier * shopSpeedBonus;
+            
+            // Call to Arms halves production time
+            const callToArmsBonus = isCallToArmsActive() ? 0.5 : 1;
+            
+            return gen.baseTime * speedMultiplier * shopSpeedBonus * callToArmsBonus;
         }
 
         function getIntelMultiplier() {
@@ -1737,6 +1873,51 @@
                 gameState.intel -= cost;
                 gameState.blackMarketUpgrades[genIndex]++;
                 showToast(`🕵️ ${GENERATORS[genIndex].name} Intel Boost upgraded to Level ${gameState.blackMarketUpgrades[genIndex]}!`);
+                updateUI();
+            }
+        }
+
+        // ==================== CALL TO ARMS ====================
+        function getCallToArmsDuration() {
+            return 30 + (gameState.callToArms.durationUpgrades * 5);
+        }
+
+        function getCallToArmsCooldown() {
+            return 10 * 60 * 1000; // 10 minutes in ms
+        }
+
+        function getCallToArmsDurationUpgradeCost() {
+            return 5 + (gameState.callToArms.durationUpgrades * 5);
+        }
+
+        function isCallToArmsActive() {
+            return gameState.callToArms.active && Date.now() < gameState.callToArms.activeUntil;
+        }
+
+        function isCallToArmsOnCooldown() {
+            return Date.now() < gameState.callToArms.cooldownUntil;
+        }
+
+        function activateCallToArms() {
+            if (!gameState.callToArms.unlocked) return;
+            if (isCallToArmsActive()) return;
+            if (isCallToArmsOnCooldown()) return;
+            
+            const duration = getCallToArmsDuration() * 1000;
+            gameState.callToArms.active = true;
+            gameState.callToArms.activeUntil = Date.now() + duration;
+            gameState.callToArms.cooldownUntil = Date.now() + duration + getCallToArmsCooldown();
+            
+            showToast(`⚔️ Call to Arms activated! Production time halved for ${getCallToArmsDuration()}s!`);
+            updateUI();
+        }
+
+        function upgradeCallToArmsDuration() {
+            const cost = getCallToArmsDurationUpgradeCost();
+            if (gameState.intel >= cost) {
+                gameState.intel -= cost;
+                gameState.callToArms.durationUpgrades++;
+                showToast(`⏱️ Call to Arms duration increased to ${getCallToArmsDuration()}s!`);
                 updateUI();
             }
         }
@@ -1957,6 +2138,56 @@
             const grid = document.getElementById('generators-grid');
             grid.innerHTML = '';
             
+            // Render Call to Arms if unlocked (defeated Outpost = enemy index 2)
+            if (gameState.enemiesDefeated >= 3) {
+                gameState.callToArms.unlocked = true;
+            }
+            
+            if (gameState.callToArms.unlocked) {
+                const ctaDiv = document.createElement('div');
+                const isActive = isCallToArmsActive();
+                const isOnCooldown = isCallToArmsOnCooldown();
+                const duration = getCallToArmsDuration();
+                const upgradeCost = getCallToArmsDurationUpgradeCost();
+                const canUpgrade = gameState.intel >= upgradeCost;
+                
+                let statusText = 'Ready!';
+                let buttonText = `⚔️ CALL TO ARMS (${duration}s)`;
+                
+                if (isActive) {
+                    const remaining = Math.ceil((gameState.callToArms.activeUntil - Date.now()) / 1000);
+                    statusText = `Active: ${remaining}s remaining`;
+                    buttonText = `⚔️ ACTIVE - ${remaining}s`;
+                } else if (isOnCooldown) {
+                    const remaining = Math.ceil((gameState.callToArms.cooldownUntil - Date.now()) / 1000);
+                    const mins = Math.floor(remaining / 60);
+                    const secs = remaining % 60;
+                    statusText = `Cooldown: ${mins}:${secs.toString().padStart(2, '0')}`;
+                    buttonText = `⏳ ${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+                
+                ctaDiv.className = `call-to-arms-container ${isActive ? 'active' : ''}`;
+                ctaDiv.innerHTML = `
+                    <div class="call-to-arms-header">
+                        <div class="call-to-arms-title">⚔️ Call to Arms</div>
+                        <div class="call-to-arms-status">${statusText}</div>
+                    </div>
+                    <div class="call-to-arms-actions">
+                        <button class="btn-call-to-arms ${isActive ? 'active' : ''}" 
+                            ${isActive || isOnCooldown ? 'disabled' : ''} 
+                            onclick="activateCallToArms()">
+                            ${buttonText}
+                        </button>
+                        <button class="btn-cta-upgrade" 
+                            ${!canUpgrade ? 'disabled' : ''} 
+                            onclick="upgradeCallToArmsDuration()">
+                            +5s (${upgradeCost} Intel)
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(ctaDiv);
+            }
+            
             GENERATORS.forEach((gen, i) => {
                 const state = gameState.generators[i];
                 const cost = getGeneratorCost(i);
@@ -1965,9 +2196,9 @@
                 const canUnlock = gameState.cash >= gen.unlockCost;
                 
                 const card = document.createElement('div');
-                card.className = `generator-card ${!state.unlocked ? 'locked' : ''}`;
                 
                 if (state.unlocked) {
+                    card.className = 'generator-card';
                     const progress = gameState.generatorProgress[i] || 0;
                     const hasOwned = state.owned > 0;
                     const productionValue = hasOwned ? getGeneratorProduction(i) : 0;
@@ -2008,7 +2239,9 @@
                             </button>
                         </div>
                     `;
-                } else {
+                } else if (canUnlock) {
+                    // Can afford to unlock - show details
+                    card.className = 'generator-card';
                     card.innerHTML = `
                         <div class="generator-header">
                             <div class="generator-info">
@@ -2028,14 +2261,22 @@
                             </div>
                         </div>
                         <div class="generator-actions">
-                            <button class="btn-generator btn-buy" ${!canUnlock ? 'disabled' : ''} data-action="unlock-generator" data-index="${i}" style="flex: 1;">
+                            <button class="btn-generator btn-buy" data-action="unlock-generator" data-index="${i}" style="flex: 1;">
                                 🔓 Unlock
                                 <span class="btn-cost">$${formatNumber(gen.unlockCost)}</span>
                             </button>
                         </div>
                     `;
-                    card.classList.remove('locked');
-                    card.style.opacity = canUnlock ? '1' : '0.6';
+                } else {
+                    // Cannot afford - show locked placeholder
+                    card.className = 'generator-card fully-locked';
+                    card.innerHTML = `
+                        <div class="locked-placeholder">
+                            <div class="lock-icon">🔒</div>
+                            <div class="lock-text">CLASSIFIED</div>
+                            <div class="lock-text" style="font-size: 0.75rem; margin-top: 0.5rem;">Unlock cost: $${formatNumber(gen.unlockCost)}</div>
+                        </div>
+                    `;
                 }
                 
                 grid.appendChild(card);
