@@ -1570,9 +1570,18 @@
         ];
 
         // Upgrade types: 'production' increases output, 'speed' reduces time
-        function getUpgradeType(tier) {
-            // Every 2nd upgrade is a speed upgrade (tiers 1, 3, 5, 7, 9...)
-            return tier % 2 === 1 ? 'speed' : 'production';
+        // Production upgrades give 50%, 75%, or 100% bonuses that compound
+        function getUpgradeInfo(tier) {
+            const isSpeed = tier % 2 === 1;
+            if (isSpeed) {
+                return { type: 'speed', bonus: 0.10 }; // 10% time reduction
+            } else {
+                // Cycle through 50%, 75%, 100% for production upgrades
+                const prodTier = Math.floor(tier / 2);
+                const bonuses = [0.50, 0.75, 1.00];
+                const bonus = bonuses[prodTier % 3];
+                return { type: 'production', bonus: bonus };
+            }
         }
 
         const ENEMIES = [
@@ -1665,25 +1674,39 @@
         function getGeneratorProduction(genIndex) {
             const gen = GENERATORS[genIndex];
             const state = gameState.generators[genIndex];
-            // Count only production upgrades (even tiers: 0, 2, 4, 6...)
-            const productionUpgrades = Math.floor((state.upgradeTier + 1) / 2);
-            const upgradeMultiplier = 1 + (productionUpgrades * 0.75);
+            
+            // Calculate compounding production multiplier from upgrades
+            let upgradeMultiplier = 1;
+            for (let t = 0; t < state.upgradeTier; t++) {
+                const info = getUpgradeInfo(t);
+                if (info.type === 'production') {
+                    upgradeMultiplier *= (1 + info.bonus);
+                }
+            }
+            
             const speedMultiplier = 1 + (gameState.speedBonuses[genIndex] * 0.5);
-            // Black market bonus: 10% per level
-            const blackMarketMultiplier = 1 + (gameState.blackMarketUpgrades[genIndex] * 0.1);
+            // Black market bonus: 10% per level (also compounds)
+            const blackMarketMultiplier = Math.pow(1.1, gameState.blackMarketUpgrades[genIndex]);
+            
             return gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * blackMarketMultiplier * gameState.prestigeMultiplier;
         }
 
         function getGeneratorTime(genIndex) {
             const gen = GENERATORS[genIndex];
             const state = gameState.generators[genIndex];
-            // Count only speed upgrades (odd tiers: 1, 3, 5, 7...)
-            const speedUpgrades = Math.floor(state.upgradeTier / 2);
-            // Each speed upgrade reduces time by 10%
-            const speedReduction = Math.pow(0.9, speedUpgrades);
+            
+            // Calculate compounding speed reduction from upgrades
+            let speedMultiplier = 1;
+            for (let t = 0; t < state.upgradeTier; t++) {
+                const info = getUpgradeInfo(t);
+                if (info.type === 'speed') {
+                    speedMultiplier *= (1 - info.bonus);
+                }
+            }
+            
             // Speed bonuses from shop also reduce time
             const shopSpeedBonus = 1 / (1 + (gameState.speedBonuses[genIndex] * 0.25));
-            return gen.baseTime * speedReduction * shopSpeedBonus;
+            return gen.baseTime * speedMultiplier * shopSpeedBonus;
         }
 
         function getIntelMultiplier() {
@@ -2037,11 +2060,12 @@
                         const cost = getUpgradeCost(i, tier);
                         const isNext = tier === state.upgradeTier;
                         const canBuy = isNext && gameState.attackPower >= cost;
-                        const upgradeType = getUpgradeType(tier);
-                        const description = upgradeType === 'speed' 
-                            ? `-10% production time for ${gen.name}` 
-                            : `+75% production for ${gen.name}`;
-                        const icon = upgradeType === 'speed' ? '⚡' : '💪';
+                        const upgradeInfo = getUpgradeInfo(tier);
+                        const bonusPercent = Math.round(upgradeInfo.bonus * 100);
+                        const description = upgradeInfo.type === 'speed' 
+                            ? `-${bonusPercent}% production time for ${gen.name}` 
+                            : `+${bonusPercent}% production for ${gen.name} (compounds)`;
+                        const icon = upgradeInfo.type === 'speed' ? '⚡' : '💪';
                         
                         upgradesHtml += `
                             <div class="upgrade-card">
@@ -2206,8 +2230,6 @@
                             <span style="color: #9c27b0;">+${formatNumber(enemy.intel)} Intel</span>
                         </div>
                     </div>
-                `;
-</div>
                 `;
             });
             
@@ -2447,16 +2469,26 @@
                         // Only count generators with auto-clickers
                         if (state.unlocked && state.owned > 0 && loaded.autoClickers?.[i]) {
                             const gen = GENERATORS[i];
-                            const productionUpgrades = Math.floor((state.upgradeTier + 1) / 2);
-                            const upgradeMultiplier = 1 + (productionUpgrades * 0.75);
+                            
+                            // Calculate compounding production multiplier
+                            let upgradeMultiplier = 1;
+                            let speedMultFromUpgrades = 1;
+                            for (let t = 0; t < state.upgradeTier; t++) {
+                                const info = getUpgradeInfo(t);
+                                if (info.type === 'production') {
+                                    upgradeMultiplier *= (1 + info.bonus);
+                                } else {
+                                    speedMultFromUpgrades *= (1 - info.bonus);
+                                }
+                            }
+                            
                             const speedMultiplier = 1 + ((loaded.speedBonuses?.[i] || 0) * 0.5);
-                            const production = gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * loaded.prestigeMultiplier;
+                            const blackMarketMult = Math.pow(1.1, loaded.blackMarketUpgrades?.[i] || 0);
+                            const production = gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * blackMarketMult * loaded.prestigeMultiplier;
                             
                             // Calculate time per cycle
-                            const speedUpgrades = Math.floor(state.upgradeTier / 2);
-                            const speedReduction = Math.pow(0.9, speedUpgrades);
                             const shopSpeedBonus = 1 / (1 + ((loaded.speedBonuses?.[i] || 0) * 0.25));
-                            const cycleTime = gen.baseTime * speedReduction * shopSpeedBonus;
+                            const cycleTime = gen.baseTime * speedMultFromUpgrades * shopSpeedBonus;
                             
                             // How many cycles completed offline
                             const cycles = Math.floor(offlineTime / cycleTime);
