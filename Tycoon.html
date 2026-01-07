@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0a0c10">
     <title>Attack Power Tycoon</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -875,22 +879,329 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+        }
+
         @media (max-width: 768px) {
+            .header {
+                padding: 0.75rem 1rem;
+            }
+
             .header-content {
                 flex-direction: column;
                 text-align: center;
+                gap: 0.75rem;
+            }
+
+            .game-title {
+                font-size: 1.3rem;
+                letter-spacing: 1px;
             }
 
             .stats-bar {
                 justify-content: center;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .stat-item {
+                min-width: 70px;
+            }
+
+            .stat-label {
+                font-size: 0.6rem;
+            }
+
+            .stat-value {
+                font-size: 1.1rem;
+            }
+
+            .header-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-header {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .main-container {
+                padding: 0.75rem;
+                gap: 1rem;
+            }
+
+            .tabs {
+                display: flex;
+                gap: 0.25rem;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab-btn {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.7rem;
+                white-space: nowrap;
+                flex-shrink: 0;
             }
 
             .generators-grid {
                 grid-template-columns: 1fr;
+                gap: 0.75rem;
             }
 
+            .generator-card {
+                padding: 1rem;
+            }
+
+            .generator-name {
+                font-size: 0.95rem;
+            }
+
+            .generator-tier {
+                font-size: 0.7rem;
+            }
+
+            .generator-icon {
+                font-size: 1.5rem;
+                width: 40px;
+                height: 40px;
+            }
+
+            .generator-stats {
+                padding: 0.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .gen-stat-label {
+                font-size: 0.6rem;
+            }
+
+            .gen-stat-value {
+                font-size: 0.8rem;
+            }
+
+            .generator-actions {
+                gap: 0.4rem;
+            }
+
+            .btn-generator {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+                min-height: 54px;
+            }
+
+            .btn-cost {
+                font-size: 0.65rem;
+            }
+
+            .upgrades-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .upgrade-card {
+                padding: 0.75rem;
+            }
+
+            .upgrade-info h4 {
+                font-size: 0.85rem;
+            }
+
+            .upgrade-info p {
+                font-size: 0.7rem;
+            }
+
+            .btn-upgrade-buy {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.75rem;
+            }
+
+            .upgrades-section h3 {
+                font-size: 0.9rem;
+            }
+
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-panel {
+                padding: 0.75rem;
+            }
+
+            .sidebar-panel h3 {
+                font-size: 0.8rem;
+            }
+
+            .production-item {
+                font-size: 0.75rem;
+                padding: 0.4rem;
+            }
+
+            .battle-container {
+                padding: 1rem;
+            }
+
+            .battle-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .battle-stats {
+                gap: 1rem;
+            }
+
+            .battle-stat-value {
+                font-size: 1rem;
+            }
+
+            .enemies-list {
+                max-height: 300px;
+            }
+
+            .enemy-card {
+                padding: 0.75rem;
+            }
+
+            .enemy-info h4 {
+                font-size: 0.85rem;
+            }
+
+            .btn-battle {
+                padding: 0.85rem;
+                font-size: 0.95rem;
+            }
+
+            .prestige-content {
+                padding: 1.5rem;
+            }
+
+            .prestige-title {
+                font-size: 2rem;
+            }
+
+            .prestige-details {
+                font-size: 1rem;
+            }
+
+            .prestige-bonus {
+                font-size: 1.5rem;
+            }
+
+            .toast {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .toast-container {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
             .game-title {
-                font-size: 1.4rem;
+                font-size: 1.1rem;
+            }
+
+            .stats-bar {
+                gap: 0.5rem;
+            }
+
+            .stat-item {
+                min-width: 60px;
+            }
+
+            .stat-value {
+                font-size: 0.95rem;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.65rem;
+            }
+
+            .generator-card {
+                padding: 0.75rem;
+            }
+
+            .generator-name {
+                font-size: 0.85rem;
+            }
+
+            .btn-generator {
+                padding: 0.6rem 0.4rem;
+                font-size: 0.75rem;
+                min-height: 50px;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn-generator,
+            .btn-upgrade-buy,
+            .btn-battle,
+            .btn-shop,
+            .btn-header,
+            .tab-btn {
+                min-height: 44px;
+            }
+
+            .generator-card:hover,
+            .upgrade-card:hover {
+                border-color: var(--border-color);
+                box-shadow: none;
+            }
+
+            .btn-buy:active:not(:disabled) {
+                filter: brightness(1.2);
+                transform: scale(0.98);
+            }
+
+            .btn-upgrade:active:not(:disabled) {
+                filter: brightness(1.2);
+                transform: scale(0.98);
+            }
+
+            .btn-battle:active:not(:disabled) {
+                transform: scale(0.98);
+            }
+
+            .tab-btn:active {
+                background: var(--bg-hover);
+            }
+        }
+
+        /* Prevent text selection on buttons for mobile */
+        button {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Safe area insets for notched phones */
+        @supports (padding: max(0px)) {
+            .header {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+                padding-top: max(0.75rem, env(safe-area-inset-top));
+            }
+
+            .main-container {
+                padding-left: max(0.75rem, env(safe-area-inset-left));
+                padding-right: max(0.75rem, env(safe-area-inset-right));
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -1020,14 +1331,14 @@
         const GENERATORS = [
             { id: 0, name: "New Recruit", icon: "🎖️", baseCost: 10, baseProduction: 1, unlockCost: 0 },
             { id: 1, name: "Gunsmith", icon: "🔫", baseCost: 100, baseProduction: 5, unlockCost: 500 },
-            { id: 2, name: "Combat Training", icon: "🎯", baseCost: 1000, baseProduction: 25, unlockCost: 5000 },
-            { id: 3, name: "Vehicle Workshop", icon: "🚛", baseCost: 10000, baseProduction: 100, unlockCost: 50000 },
-            { id: 4, name: "Mobile Command Base", icon: "📡", baseCost: 100000, baseProduction: 400, unlockCost: 500000 },
-            { id: 5, name: "Hangar", icon: "✈️", baseCost: 1000000, baseProduction: 1600, unlockCost: 5000000 },
-            { id: 6, name: "Bomb Factory", icon: "💣", baseCost: 10000000, baseProduction: 6400, unlockCost: 50000000 },
-            { id: 7, name: "Drone Pilot", icon: "🛸", baseCost: 100000000, baseProduction: 25000, unlockCost: 500000000 },
-            { id: 8, name: "Nuclear Research", icon: "☢️", baseCost: 1000000000, baseProduction: 100000, unlockCost: 5000000000 },
-            { id: 9, name: "WMD Production", icon: "🚀", baseCost: 10000000000, baseProduction: 500000, unlockCost: 50000000000 }
+            { id: 2, name: "Combat Training", icon: "🎯", baseCost: 1000, baseProduction: 40, unlockCost: 5000 },
+            { id: 3, name: "Vehicle Workshop", icon: "🚛", baseCost: 10000, baseProduction: 200, unlockCost: 50000 },
+            { id: 4, name: "Mobile Command Base", icon: "📡", baseCost: 100000, baseProduction: 1000, unlockCost: 500000 },
+            { id: 5, name: "Hangar", icon: "✈️", baseCost: 1000000, baseProduction: 5000, unlockCost: 5000000 },
+            { id: 6, name: "Bomb Factory", icon: "💣", baseCost: 10000000, baseProduction: 25000, unlockCost: 50000000 },
+            { id: 7, name: "Drone Pilot", icon: "🛸", baseCost: 100000000, baseProduction: 125000, unlockCost: 500000000 },
+            { id: 8, name: "Nuclear Research", icon: "☢️", baseCost: 1000000000, baseProduction: 650000, unlockCost: 5000000000 },
+            { id: 9, name: "WMD Production", icon: "🚀", baseCost: 10000000000, baseProduction: 3500000, unlockCost: 50000000000 }
         ];
 
         const UPGRADE_NAMES = [
@@ -1044,21 +1355,21 @@
         ];
 
         const ENEMIES = [
-            { name: "Scout Patrol", hp: 1000, reward: 0.05 },
-            { name: "Guard Post", hp: 5000, reward: 0.05 },
-            { name: "Outpost", hp: 25000, reward: 0.10 },
-            { name: "Watchtower", hp: 100000, reward: 0.10 },
-            { name: "Bunker", hp: 500000, reward: 0.15 },
-            { name: "Forward Base", hp: 2500000, reward: 0.15 },
-            { name: "Military Camp", hp: 10000000, reward: 0.20 },
-            { name: "Armored Division", hp: 50000000, reward: 0.20 },
-            { name: "Fortress", hp: 250000000, reward: 0.25 },
-            { name: "Command Center", hp: 1000000000, reward: 0.25 },
-            { name: "Underground Complex", hp: 5000000000, reward: 0.30 },
-            { name: "Nuclear Silo", hp: 25000000000, reward: 0.30 },
-            { name: "Orbital Station", hp: 100000000000, reward: 0.35 },
-            { name: "Moon Base", hp: 500000000000, reward: 0.35 },
-            { name: "Death Star", hp: 2500000000000, reward: 0.50 }
+            { name: "Scout Patrol", hp: 5000, reward: 0.05 },
+            { name: "Guard Post", hp: 25000, reward: 0.05 },
+            { name: "Outpost", hp: 150000, reward: 0.10 },
+            { name: "Watchtower", hp: 750000, reward: 0.10 },
+            { name: "Bunker", hp: 4000000, reward: 0.15 },
+            { name: "Forward Base", hp: 20000000, reward: 0.15 },
+            { name: "Military Camp", hp: 100000000, reward: 0.20 },
+            { name: "Armored Division", hp: 500000000, reward: 0.20 },
+            { name: "Fortress", hp: 2500000000, reward: 0.25 },
+            { name: "Command Center", hp: 12000000000, reward: 0.25 },
+            { name: "Underground Complex", hp: 60000000000, reward: 0.30 },
+            { name: "Nuclear Silo", hp: 300000000000, reward: 0.30 },
+            { name: "Orbital Station", hp: 1500000000000, reward: 0.35 },
+            { name: "Moon Base", hp: 8000000000000, reward: 0.35 },
+            { name: "Death Star", hp: 50000000000000, reward: 0.50 }
         ];
 
         // ==================== GAME STATE ====================
@@ -1114,7 +1425,7 @@
         function getGeneratorProduction(genIndex) {
             const gen = GENERATORS[genIndex];
             const state = gameState.generators[genIndex];
-            const upgradeMultiplier = 1 + (state.upgradeTier * 0.25);
+            const upgradeMultiplier = 1 + (state.upgradeTier * 0.75);
             const speedMultiplier = 1 + (gameState.speedBonuses[genIndex] * 0.5);
             return gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * gameState.prestigeMultiplier;
         }
@@ -1151,7 +1462,7 @@
         // ==================== UPGRADE FUNCTIONS ====================
         function getUpgradeCost(genIndex, tier) {
             const gen = GENERATORS[genIndex];
-            return Math.floor(gen.baseCost * 10 * Math.pow(3, tier));
+            return Math.floor(gen.baseCost * 5 * Math.pow(2.5, tier));
         }
 
         function getUpgradeName(genIndex, tier) {
@@ -1387,7 +1698,7 @@
                         <div class="upgrade-card ${owned ? 'owned' : ''}">
                             <div class="upgrade-info">
                                 <h4>${getUpgradeName(i, tier)}</h4>
-                                <p>+25% production for ${gen.name}</p>
+                                <p>+75% production for ${gen.name}</p>
                             </div>
                             <button class="btn-upgrade-buy ${owned ? 'owned' : ''}" 
                                 ${!canBuy && !owned ? 'disabled' : ''} 
@@ -1670,7 +1981,7 @@
                     loaded.generators.forEach((state, i) => {
                         if (state.unlocked) {
                             const gen = GENERATORS[i];
-                            const upgradeMultiplier = 1 + (state.upgradeTier * 0.25);
+                            const upgradeMultiplier = 1 + (state.upgradeTier * 0.75);
                             const speedMultiplier = 1 + ((loaded.speedBonuses?.[i] || 0) * 0.5);
                             totalProduction += gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * loaded.prestigeMultiplier;
                         }
