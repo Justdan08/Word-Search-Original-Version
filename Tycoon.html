@@ -1495,7 +1495,8 @@
         function getTotalProduction() {
             let total = 0;
             for (let i = 0; i < GENERATORS.length; i++) {
-                if (gameState.generators[i].unlocked) {
+                // Only count production from generators with auto-clickers
+                if (gameState.generators[i].unlocked && gameState.autoClickers[i] && gameState.generators[i].owned > 0) {
                     total += getGeneratorProduction(i);
                 }
             }
@@ -1975,13 +1976,9 @@
             const delta = (now - gameState.lastUpdate) / 1000;
             gameState.lastUpdate = now;
             
-            // Update progress bars and add production
-            let totalProduction = 0;
+            // Update progress bars (visual only, no auto production)
             GENERATORS.forEach((gen, i) => {
                 if (gameState.generators[i].unlocked && gameState.generators[i].owned > 0) {
-                    const production = getGeneratorProduction(i);
-                    totalProduction += production;
-                    
                     // Progress bar cycles every 1 second, affected by speed bonus
                     const speedMultiplier = 1 + (gameState.speedBonuses[i] * 0.5);
                     gameState.generatorProgress[i] = (gameState.generatorProgress[i] || 0) + (delta * 100 * speedMultiplier);
@@ -1992,16 +1989,13 @@
                 }
             });
             
-            const production = totalProduction * delta;
-            gameState.attackPower += production;
-            gameState.totalEarned += production;
             gameState.playTime += delta;
             
             // Auto-clickers - simulate clicking on generator to add production burst
             GENERATORS.forEach((gen, i) => {
                 if (gameState.autoClickers[i] && gameState.generators[i].unlocked && gameState.generators[i].owned > 0) {
-                    // Each auto-click adds 10% of that generator's per-second production
-                    const clickBonus = getGeneratorProduction(i) * 0.1 * delta * 10;
+                    // Each auto-clicker adds production equivalent to 1 click per second
+                    const clickBonus = getGeneratorProduction(i) * delta;
                     gameState.attackPower += clickBonus;
                     gameState.totalEarned += clickBonus;
                 }
@@ -2123,10 +2117,11 @@
                 const offlineTime = (Date.now() - loaded.lastUpdate) / 1000;
                 
                 if (offlineTime > 60) { // Only show if away for more than 1 minute
-                    // Recalculate production with loaded state
+                    // Recalculate production with loaded state - only auto-clicker generators
                     let totalProduction = 0;
                     loaded.generators.forEach((state, i) => {
-                        if (state.unlocked) {
+                        // Only count generators with auto-clickers
+                        if (state.unlocked && state.owned > 0 && loaded.autoClickers?.[i]) {
                             const gen = GENERATORS[i];
                             const upgradeMultiplier = 1 + (state.upgradeTier * 0.75);
                             const speedMultiplier = 1 + ((loaded.speedBonuses?.[i] || 0) * 0.5);
@@ -2147,6 +2142,11 @@
                             : `${Math.floor(offlineTime / 60)}m`;
                         
                         showToast(`💤 Welcome back! Earned ${formatNumber(offlineEarnings)} AP while away (${timeStr})`);
+                        return true;
+                    } else {
+                        // Still load the game even if no offline earnings
+                        gameState = { ...gameState, ...loaded };
+                        gameState.lastUpdate = Date.now();
                         return true;
                     }
                 }
