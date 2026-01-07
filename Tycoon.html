@@ -126,6 +126,11 @@
             text-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
         }
 
+        .stat-value.cash {
+            color: var(--accent-green);
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+        }
+
         .stat-value.multiplier {
             color: var(--accent-green);
         }
@@ -1406,20 +1411,16 @@
                     <span class="stat-value attack-power" id="attack-power">0</span>
                 </div>
                 <div class="stat-item">
+                    <span class="stat-label">Cash</span>
+                    <span class="stat-value cash" id="cash">10</span>
+                </div>
+                <div class="stat-item">
                     <span class="stat-label">Intel</span>
                     <span class="stat-value intel" id="intel">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Per Second</span>
+                    <span class="stat-label">Per Cycle</span>
                     <span class="stat-value" id="per-second">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Prestige Mult</span>
-                    <span class="stat-value multiplier" id="multiplier">1.00x</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Intel Mult</span>
-                    <span class="stat-value intel-mult" id="intel-multiplier">1.00x</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">Total Mult</span>
@@ -1585,27 +1586,29 @@
         }
 
         const ENEMIES = [
-            { name: "Scout Patrol", hp: 5000, reward: 0.05, intel: 1 },
-            { name: "Guard Post", hp: 25000, reward: 0.05, intel: 2 },
-            { name: "Outpost", hp: 150000, reward: 0.10, intel: 5 },
-            { name: "Watchtower", hp: 750000, reward: 0.10, intel: 10 },
-            { name: "Bunker", hp: 4000000, reward: 0.15, intel: 25 },
-            { name: "Forward Base", hp: 20000000, reward: 0.15, intel: 50 },
-            { name: "Military Camp", hp: 100000000, reward: 0.20, intel: 100 },
-            { name: "Armored Division", hp: 500000000, reward: 0.20, intel: 250 },
-            { name: "Fortress", hp: 2500000000, reward: 0.25, intel: 500 },
-            { name: "Command Center", hp: 12000000000, reward: 0.25, intel: 1000 },
-            { name: "Underground Complex", hp: 60000000000, reward: 0.30, intel: 2500 },
-            { name: "Nuclear Silo", hp: 300000000000, reward: 0.30, intel: 5000 },
-            { name: "Orbital Station", hp: 1500000000000, reward: 0.35, intel: 10000 },
-            { name: "Moon Base", hp: 8000000000000, reward: 0.35, intel: 25000 },
-            { name: "Death Star", hp: 50000000000000, reward: 0.50, intel: 100000 }
+            { name: "Scout Patrol", hp: 50000, reward: 0.05, intel: 1 },
+            { name: "Guard Post", hp: 500000, reward: 0.05, intel: 2 },
+            { name: "Outpost", hp: 5000000, reward: 0.10, intel: 5 },
+            { name: "Watchtower", hp: 50000000, reward: 0.10, intel: 10 },
+            { name: "Bunker", hp: 500000000, reward: 0.15, intel: 25 },
+            { name: "Forward Base", hp: 5000000000, reward: 0.15, intel: 50 },
+            { name: "Military Camp", hp: 50000000000, reward: 0.20, intel: 100 },
+            { name: "Armored Division", hp: 500000000000, reward: 0.20, intel: 250 },
+            { name: "Fortress", hp: 5000000000000, reward: 0.25, intel: 500 },
+            { name: "Command Center", hp: 50000000000000, reward: 0.25, intel: 1000 },
+            { name: "Underground Complex", hp: 500000000000000, reward: 0.30, intel: 2500 },
+            { name: "Nuclear Silo", hp: 5000000000000000, reward: 0.30, intel: 5000 },
+            { name: "Orbital Station", hp: 50000000000000000, reward: 0.35, intel: 10000 },
+            { name: "Moon Base", hp: 500000000000000000, reward: 0.35, intel: 25000 },
+            { name: "Death Star", hp: 5000000000000000000, reward: 0.50, intel: 100000 }
         ];
 
         // ==================== GAME STATE ====================
         let gameState = {
-            attackPower: 10,
+            attackPower: 0,
+            cash: 10,
             totalEarned: 0,
+            totalCashEarned: 0,
             prestigeMultiplier: 1,
             prestigeMultiplierLocked: false,
             intel: 0,
@@ -1755,8 +1758,8 @@
         function buyGenerator(genIndex) {
             if (!canPurchase('gen-' + genIndex)) return;
             const cost = getGeneratorCost(genIndex);
-            if (gameState.attackPower >= cost) {
-                gameState.attackPower -= cost;
+            if (gameState.cash >= cost) {
+                gameState.cash -= cost;
                 gameState.generators[genIndex].owned++;
                 updateUI();
             }
@@ -1777,8 +1780,8 @@
         function unlockGenerator(genIndex) {
             if (!canPurchase('unlock-' + genIndex)) return;
             const gen = GENERATORS[genIndex];
-            if (gameState.attackPower >= gen.unlockCost && !gameState.generators[genIndex].unlocked) {
-                gameState.attackPower -= gen.unlockCost;
+            if (gameState.cash >= gen.unlockCost && !gameState.generators[genIndex].unlocked) {
+                gameState.cash -= gen.unlockCost;
                 gameState.generators[genIndex].unlocked = true;
                 showToast(`🔓 Unlocked ${gen.name}!`);
                 updateUI();
@@ -1788,7 +1791,7 @@
         // ==================== UPGRADE FUNCTIONS ====================
         function getUpgradeCost(genIndex, tier) {
             const gen = GENERATORS[genIndex];
-            return Math.floor(gen.baseCost * 5 * Math.pow(2.5, tier));
+            return Math.floor(gen.baseCost * 5 * Math.pow(1.8, tier));
         }
 
         function getUpgradeName(genIndex, tier) {
@@ -1804,8 +1807,8 @@
             if (state.upgradeTier >= 50) return;
             
             const cost = getUpgradeCost(genIndex, state.upgradeTier);
-            if (gameState.attackPower >= cost) {
-                gameState.attackPower -= cost;
+            if (gameState.cash >= cost) {
+                gameState.cash -= cost;
                 state.upgradeTier++;
                 showToast(`⬆️ ${GENERATORS[genIndex].name} upgraded to Tier ${state.upgradeTier}!`);
                 updateUI();
@@ -1820,8 +1823,8 @@
         function buyAutoClicker(genIndex) {
             if (!canPurchase('auto-' + genIndex)) return;
             const cost = getAutoClickerCost(genIndex);
-            if (gameState.attackPower >= cost && !gameState.autoClickers[genIndex]) {
-                gameState.attackPower -= cost;
+            if (gameState.cash >= cost && !gameState.autoClickers[genIndex]) {
+                gameState.cash -= cost;
                 gameState.autoClickers[genIndex] = true;
                 showToast(`🤖 Auto-clicker for ${GENERATORS[genIndex].name} activated!`);
                 updateUI();
@@ -1838,8 +1841,8 @@
             if (level >= 10) return;
             
             const cost = getSpeedBonusCost(genIndex, level);
-            if (gameState.attackPower >= cost) {
-                gameState.attackPower -= cost;
+            if (gameState.cash >= cost) {
+                gameState.cash -= cost;
                 gameState.speedBonuses[genIndex]++;
                 showToast(`⚡ ${GENERATORS[genIndex].name} speed bonus increased!`);
                 updateUI();
@@ -1922,8 +1925,9 @@
             gameState.intel += prestige.intelEarned;
             gameState.totalIntel += prestige.intelEarned;
             
-            // Reset generators but start with 10 AP
-            gameState.attackPower = 10;
+            // Reset generators and currencies but start with 10 cash
+            gameState.attackPower = 0;
+            gameState.cash = 10;
             gameState.generators = GENERATORS.map((g, i) => ({
                 owned: 0,
                 upgradeTier: 0,
@@ -1957,8 +1961,8 @@
                 const state = gameState.generators[i];
                 const cost = getGeneratorCost(i);
                 const production = getGeneratorProduction(i);
-                const canBuy = gameState.attackPower >= cost;
-                const canUnlock = gameState.attackPower >= gen.unlockCost;
+                const canBuy = gameState.cash >= cost;
+                const canUnlock = gameState.cash >= gen.unlockCost;
                 
                 const card = document.createElement('div');
                 card.className = `generator-card ${!state.unlocked ? 'locked' : ''}`;
@@ -1996,11 +2000,11 @@
                         <div class="generator-actions">
                             <button class="btn-generator btn-buy" ${!canBuy ? 'disabled' : ''} data-action="buy-generator" data-index="${i}">
                                 Buy +1
-                                <span class="btn-cost">${formatNumber(cost)} AP</span>
+                                <span class="btn-cost">$${formatNumber(cost)}</span>
                             </button>
-                            <button class="btn-generator btn-upgrade" ${state.upgradeTier >= 50 || gameState.attackPower < getUpgradeCost(i, state.upgradeTier) ? 'disabled' : ''} data-action="buy-upgrade" data-index="${i}">
+                            <button class="btn-generator btn-upgrade" ${state.upgradeTier >= 50 || gameState.cash < getUpgradeCost(i, state.upgradeTier) ? 'disabled' : ''} data-action="buy-upgrade" data-index="${i}">
                                 Upgrade
-                                <span class="btn-cost">${state.upgradeTier >= 50 ? 'MAX' : formatNumber(getUpgradeCost(i, state.upgradeTier)) + ' AP'}</span>
+                                <span class="btn-cost">${state.upgradeTier >= 50 ? 'MAX' : '$' + formatNumber(getUpgradeCost(i, state.upgradeTier))}</span>
                             </button>
                         </div>
                     `;
@@ -2016,17 +2020,17 @@
                         <div class="generator-stats">
                             <div class="gen-stat">
                                 <span class="gen-stat-label">Base Production</span>
-                                <span class="gen-stat-value">${formatNumber(gen.baseProduction)}/s</span>
+                                <span class="gen-stat-value">${formatNumber(gen.baseProduction)}</span>
                             </div>
                             <div class="gen-stat">
                                 <span class="gen-stat-label">Unlock Cost</span>
-                                <span class="gen-stat-value">${formatNumber(gen.unlockCost)} AP</span>
+                                <span class="gen-stat-value">$${formatNumber(gen.unlockCost)}</span>
                             </div>
                         </div>
                         <div class="generator-actions">
                             <button class="btn-generator btn-buy" ${!canUnlock ? 'disabled' : ''} data-action="unlock-generator" data-index="${i}" style="flex: 1;">
                                 🔓 Unlock
-                                <span class="btn-cost">${formatNumber(gen.unlockCost)} AP</span>
+                                <span class="btn-cost">$${formatNumber(gen.unlockCost)}</span>
                             </button>
                         </div>
                     `;
@@ -2059,7 +2063,7 @@
                     for (let tier = startTier; tier < endTier; tier++) {
                         const cost = getUpgradeCost(i, tier);
                         const isNext = tier === state.upgradeTier;
-                        const canBuy = isNext && gameState.attackPower >= cost;
+                        const canBuy = isNext && gameState.cash >= cost;
                         const upgradeInfo = getUpgradeInfo(tier);
                         const bonusPercent = Math.round(upgradeInfo.bonus * 100);
                         const description = upgradeInfo.type === 'speed' 
@@ -2076,7 +2080,7 @@
                                 <button class="btn-upgrade-buy" 
                                     ${!canBuy ? 'disabled' : ''} 
                                     ${isNext ? `data-action="buy-upgrade" data-index="${i}"` : ''}>
-                                    ${isNext ? formatNumber(cost) + ' AP' : 'Tier ' + (tier + 1)}
+                                    ${isNext ? '$' + formatNumber(cost) : 'Tier ' + (tier + 1)}
                                 </button>
                             </div>
                         `;
@@ -2102,7 +2106,7 @@
                 
                 const owned = gameState.autoClickers[i];
                 const cost = getAutoClickerCost(i);
-                const canBuy = !owned && gameState.attackPower >= cost;
+                const canBuy = !owned && gameState.cash >= cost;
                 
                 autoGrid.innerHTML += `
                     <div class="upgrade-card ${owned ? 'owned' : ''}">
@@ -2113,7 +2117,7 @@
                         <button class="btn-upgrade-buy ${owned ? 'owned' : ''}" 
                             ${!canBuy && !owned ? 'disabled' : ''} 
                             ${owned ? '' : `data-action="buy-autoclicker" data-index="${i}"`}>
-                            ${owned ? '✓ Active' : formatNumber(cost) + ' AP'}
+                            ${owned ? '✓ Active' : '$' + formatNumber(cost)}
                         </button>
                     </div>
                 `;
@@ -2129,7 +2133,7 @@
                 const level = gameState.speedBonuses[i];
                 const maxed = level >= 10;
                 const cost = getSpeedBonusCost(i, level);
-                const canBuy = !maxed && gameState.attackPower >= cost;
+                const canBuy = !maxed && gameState.cash >= cost;
                 
                 speedGrid.innerHTML += `
                     <div class="upgrade-card">
@@ -2140,7 +2144,7 @@
                         <button class="btn-upgrade-buy ${maxed ? 'owned' : ''}" 
                             ${!canBuy && !maxed ? 'disabled' : ''} 
                             ${maxed ? '' : `data-action="buy-speed" data-index="${i}"`}>
-                            ${maxed ? 'MAX' : formatNumber(cost) + ' AP'}
+                            ${maxed ? 'MAX' : '$' + formatNumber(cost)}
                         </button>
                     </div>
                 `;
@@ -2272,10 +2276,9 @@
 
         function updateStats() {
             document.getElementById('attack-power').textContent = formatNumber(gameState.attackPower);
+            document.getElementById('cash').textContent = '$' + formatNumber(gameState.cash);
             document.getElementById('intel').textContent = formatNumber(gameState.intel);
             document.getElementById('per-second').textContent = formatNumber(getTotalProduction());
-            document.getElementById('multiplier').textContent = gameState.prestigeMultiplier.toFixed(2) + 'x';
-            document.getElementById('intel-multiplier').textContent = getIntelMultiplier().toFixed(2) + 'x';
             document.getElementById('total-multiplier').textContent = getTotalMultiplier().toFixed(2) + 'x';
             document.getElementById('stat-total-earned').textContent = formatNumber(gameState.totalEarned);
             document.getElementById('stat-battles-won').textContent = gameState.battlesWon;
@@ -2326,8 +2329,11 @@
                     // Production complete
                     if (state.currentProgress >= 100) {
                         const production = getGeneratorProduction(i);
+                        // Produce both AP and Cash
                         gameState.attackPower += production;
+                        gameState.cash += production;
                         gameState.totalEarned += production;
+                        gameState.totalCashEarned += production;
                         
                         // Reset progress
                         state.currentProgress = 0;
@@ -2499,14 +2505,16 @@
                     if (totalEarnings > 0) {
                         gameState = { ...gameState, ...loaded };
                         gameState.attackPower += totalEarnings;
+                        gameState.cash += totalEarnings;
                         gameState.totalEarned += totalEarnings;
+                        gameState.totalCashEarned += totalEarnings;
                         gameState.lastUpdate = Date.now();
                         
                         const timeStr = offlineTime > 3600 
                             ? `${Math.floor(offlineTime / 3600)}h ${Math.floor((offlineTime % 3600) / 60)}m`
                             : `${Math.floor(offlineTime / 60)}m`;
                         
-                        showToast(`💤 Welcome back! Earned ${formatNumber(totalEarnings)} AP while away (${timeStr})`);
+                        showToast(`💤 Welcome back! Earned ${formatNumber(totalEarnings)} AP & Cash while away (${timeStr})`);
                         return true;
                     } else {
                         // Still load the game even if no offline earnings
