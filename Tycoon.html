@@ -338,7 +338,18 @@
             padding: 0.25rem;
         }
 
-        .generator-click-btn:hover:not(:disabled) {
+        .generator-click-btn.active {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            border-color: var(--accent-green);
+            animation: pulse-active 1s infinite;
+        }
+
+        @keyframes pulse-active {
+            0%, 100% { box-shadow: 0 0 5px var(--accent-green); }
+            50% { box-shadow: 0 0 15px var(--accent-green); }
+        }
+
+        .generator-click-btn:hover:not(:disabled):not(.active) {
             filter: brightness(1.15);
             transform: scale(1.05);
         }
@@ -359,6 +370,10 @@
             font-size: 0.55rem;
             color: white;
             text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .generator-progress-fill.animating {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
         }
 
         .generator-stats {
@@ -1379,30 +1394,36 @@
     <script>
         // ==================== GAME DATA ====================
         const GENERATORS = [
-            { id: 0, name: "New Recruit", icon: "🎖️", baseCost: 10, baseProduction: 1, unlockCost: 0 },
-            { id: 1, name: "Gunsmith", icon: "🔫", baseCost: 100, baseProduction: 5, unlockCost: 500 },
-            { id: 2, name: "Combat Training", icon: "🎯", baseCost: 1000, baseProduction: 40, unlockCost: 5000 },
-            { id: 3, name: "Vehicle Workshop", icon: "🚛", baseCost: 10000, baseProduction: 200, unlockCost: 50000 },
-            { id: 4, name: "Mobile Command Base", icon: "📡", baseCost: 100000, baseProduction: 1000, unlockCost: 500000 },
-            { id: 5, name: "Hangar", icon: "✈️", baseCost: 1000000, baseProduction: 5000, unlockCost: 5000000 },
-            { id: 6, name: "Bomb Factory", icon: "💣", baseCost: 10000000, baseProduction: 25000, unlockCost: 50000000 },
-            { id: 7, name: "Drone Pilot", icon: "🛸", baseCost: 100000000, baseProduction: 125000, unlockCost: 500000000 },
-            { id: 8, name: "Nuclear Research", icon: "☢️", baseCost: 1000000000, baseProduction: 650000, unlockCost: 5000000000 },
-            { id: 9, name: "WMD Production", icon: "🚀", baseCost: 10000000000, baseProduction: 3500000, unlockCost: 50000000000 }
+            { id: 0, name: "New Recruit", icon: "🎖️", baseCost: 10, baseProduction: 1, unlockCost: 0, baseTime: 3 },
+            { id: 1, name: "Gunsmith", icon: "🔫", baseCost: 100, baseProduction: 5, unlockCost: 500, baseTime: 10 },
+            { id: 2, name: "Combat Training", icon: "🎯", baseCost: 1000, baseProduction: 40, unlockCost: 5000, baseTime: 20 },
+            { id: 3, name: "Vehicle Workshop", icon: "🚛", baseCost: 10000, baseProduction: 200, unlockCost: 50000, baseTime: 35 },
+            { id: 4, name: "Mobile Command Base", icon: "📡", baseCost: 100000, baseProduction: 1000, unlockCost: 500000, baseTime: 55 },
+            { id: 5, name: "Hangar", icon: "✈️", baseCost: 1000000, baseProduction: 5000, unlockCost: 5000000, baseTime: 80 },
+            { id: 6, name: "Bomb Factory", icon: "💣", baseCost: 10000000, baseProduction: 25000, unlockCost: 50000000, baseTime: 120 },
+            { id: 7, name: "Drone Pilot", icon: "🛸", baseCost: 100000000, baseProduction: 125000, unlockCost: 500000000, baseTime: 180 },
+            { id: 8, name: "Nuclear Research", icon: "☢️", baseCost: 1000000000, baseProduction: 650000, unlockCost: 5000000000, baseTime: 300 },
+            { id: 9, name: "WMD Production", icon: "🚀", baseCost: 10000000000, baseProduction: 3500000, unlockCost: 50000000000, baseTime: 600 }
         ];
 
         const UPGRADE_NAMES = [
-            ["Sign-on Bonus", "Recruitment Drive", "Training Camp", "Barracks Expansion", "Elite Squad"],
-            ["Better Tools", "Precision Parts", "Assembly Line", "Master Craftsman", "Legendary Forge"],
-            ["Drill Sergeant", "Combat Sim", "Live Fire", "Special Ops", "Supersoldier Program"],
-            ["Turbo Engines", "Armor Plating", "Heavy Artillery", "Prototype Tech", "Mech Warriors"],
-            ["Satellite Link", "AI Coordination", "Tactical Network", "Global Reach", "Quantum Comms"],
-            ["Runway Extension", "Stealth Tech", "Supersonic Jets", "Orbital Craft", "Space Fleet"],
-            ["Bigger Booms", "Cluster Tech", "Bunker Busters", "Thermobaric", "Antimatter Cores"],
-            ["Swarm AI", "Cloaking Device", "Laser Targeting", "Autonomous Fleet", "Skynet Protocol"],
-            ["Enrichment", "Fusion Core", "Particle Beam", "Zero Point", "Stellar Reactor"],
-            ["Global Strike", "Orbital Cannon", "Planet Cracker", "Doomsday Device", "Galaxy Ender"]
+            ["Sign-on Bonus", "Recruitment Drive", "Training Camp", "Barracks Expansion", "Elite Squad", "Quick Enlistment", "Rapid Deployment", "Streamlined Intake", "Fast Track Program", "Instant Recruit"],
+            ["Better Tools", "Precision Parts", "Assembly Line", "Master Craftsman", "Legendary Forge", "Quick Hands", "Speed Loader", "Rapid Fire Mods", "Turbo Assembly", "Instant Craft"],
+            ["Drill Sergeant", "Combat Sim", "Live Fire", "Special Ops", "Supersoldier Program", "Quick Drills", "Speed Course", "Rapid Training", "Fast Learners", "Instant Skills"],
+            ["Turbo Engines", "Armor Plating", "Heavy Artillery", "Prototype Tech", "Mech Warriors", "Quick Build", "Speed Assembly", "Rapid Production", "Fast Fabrication", "Instant Vehicle"],
+            ["Satellite Link", "AI Coordination", "Tactical Network", "Global Reach", "Quantum Comms", "Quick Setup", "Speed Deploy", "Rapid Command", "Fast Response", "Instant Orders"],
+            ["Runway Extension", "Stealth Tech", "Supersonic Jets", "Orbital Craft", "Space Fleet", "Quick Launch", "Speed Takeoff", "Rapid Scramble", "Fast Flight", "Instant Air"],
+            ["Bigger Booms", "Cluster Tech", "Bunker Busters", "Thermobaric", "Antimatter Cores", "Quick Fuse", "Speed Assembly", "Rapid Production", "Fast Arming", "Instant Bomb"],
+            ["Swarm AI", "Cloaking Device", "Laser Targeting", "Autonomous Fleet", "Skynet Protocol", "Quick Program", "Speed Flight", "Rapid Deploy", "Fast Swarm", "Instant Drone"],
+            ["Enrichment", "Fusion Core", "Particle Beam", "Zero Point", "Stellar Reactor", "Quick Process", "Speed Reaction", "Rapid Fission", "Fast Fusion", "Instant Power"],
+            ["Global Strike", "Orbital Cannon", "Planet Cracker", "Doomsday Device", "Galaxy Ender", "Quick Launch", "Speed Strike", "Rapid Fire", "Fast Destruction", "Instant Doom"]
         ];
+
+        // Upgrade types: 'production' increases output, 'speed' reduces time
+        function getUpgradeType(tier) {
+            // Every 2nd upgrade is a speed upgrade (tiers 1, 3, 5, 7, 9...)
+            return tier % 2 === 1 ? 'speed' : 'production';
+        }
 
         const ENEMIES = [
             { name: "Scout Patrol", hp: 5000, reward: 0.05 },
@@ -1433,7 +1454,9 @@
             generators: GENERATORS.map(g => ({
                 owned: 0,
                 upgradeTier: 0,
-                unlocked: g.id === 0
+                unlocked: g.id === 0,
+                active: false,
+                currentProgress: 0
             })),
             autoClickers: GENERATORS.map(() => false),
             speedBonuses: GENERATORS.map(() => 0),
@@ -1487,9 +1510,23 @@
         function getGeneratorProduction(genIndex) {
             const gen = GENERATORS[genIndex];
             const state = gameState.generators[genIndex];
-            const upgradeMultiplier = 1 + (state.upgradeTier * 0.75);
+            // Count only production upgrades (even tiers: 0, 2, 4, 6...)
+            const productionUpgrades = Math.floor((state.upgradeTier + 1) / 2);
+            const upgradeMultiplier = 1 + (productionUpgrades * 0.75);
             const speedMultiplier = 1 + (gameState.speedBonuses[genIndex] * 0.5);
             return gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * gameState.prestigeMultiplier;
+        }
+
+        function getGeneratorTime(genIndex) {
+            const gen = GENERATORS[genIndex];
+            const state = gameState.generators[genIndex];
+            // Count only speed upgrades (odd tiers: 1, 3, 5, 7...)
+            const speedUpgrades = Math.floor(state.upgradeTier / 2);
+            // Each speed upgrade reduces time by 10%
+            const speedReduction = Math.pow(0.9, speedUpgrades);
+            // Speed bonuses from shop also reduce time
+            const shopSpeedBonus = 1 / (1 + (gameState.speedBonuses[genIndex] * 0.25));
+            return gen.baseTime * speedReduction * shopSpeedBonus;
         }
 
         function getTotalProduction() {
@@ -1497,7 +1534,10 @@
             for (let i = 0; i < GENERATORS.length; i++) {
                 // Only count production from generators with auto-clickers
                 if (gameState.generators[i].unlocked && gameState.autoClickers[i] && gameState.generators[i].owned > 0) {
-                    total += getGeneratorProduction(i);
+                    const production = getGeneratorProduction(i);
+                    const cycleTime = getGeneratorTime(i);
+                    // Production per second = production per cycle / cycle time
+                    total += production / cycleTime;
                 }
             }
             return total;
@@ -1518,14 +1558,11 @@
             const state = gameState.generators[genIndex];
             if (!state.unlocked || state.owned === 0) return;
             
-            // Manual click gives 1 second worth of production from this generator
-            const clickBonus = getGeneratorProduction(genIndex);
-            gameState.attackPower += clickBonus;
-            gameState.totalEarned += clickBonus;
-            
-            // Visual feedback - speed up progress bar
-            gameState.generatorProgress[genIndex] = (gameState.generatorProgress[genIndex] + 25) % 100;
-            updateStats();
+            // If not already active, start the production cycle
+            if (!state.active) {
+                state.active = true;
+                state.currentProgress = 0;
+            }
         }
 
         function unlockGenerator(genIndex) {
@@ -1658,7 +1695,9 @@
             gameState.generators = GENERATORS.map((g, i) => ({
                 owned: 0,
                 upgradeTier: 0,
-                unlocked: i === 0
+                unlocked: i === 0,
+                active: false,
+                currentProgress: 0
             }));
             gameState.generatorProgress = GENERATORS.map(() => 0);
             
@@ -1693,29 +1732,31 @@
                 if (state.unlocked) {
                     const progress = gameState.generatorProgress[i] || 0;
                     const hasOwned = state.owned > 0;
-                    const clickValue = hasOwned ? getGeneratorProduction(i) : 0;
+                    const productionValue = hasOwned ? getGeneratorProduction(i) : 0;
+                    const productionTime = hasOwned ? getGeneratorTime(i) : GENERATORS[i].baseTime;
+                    const isActive = state.active && hasOwned;
                     card.innerHTML = `
                         <div class="generator-header">
                             <div class="generator-info">
                                 <div class="generator-name">${gen.name}</div>
                                 <div class="generator-tier">Tier ${state.upgradeTier}/50 • Owned: ${state.owned}</div>
                             </div>
-                            <button class="generator-click-btn" ${!hasOwned ? 'disabled' : ''} data-action="click-generator" data-index="${i}">
+                            <button class="generator-click-btn ${isActive ? 'active' : ''}" ${!hasOwned ? 'disabled' : ''} data-action="click-generator" data-index="${i}">
                                 ${gen.icon}
-                                <span class="click-value">+${formatNumber(clickValue)}</span>
+                                <span class="click-value">${isActive ? 'ACTIVE' : 'START'}</span>
                             </button>
                         </div>
                         <div class="generator-progress">
-                            <div class="generator-progress-fill" data-progress="${i}" style="width: ${hasOwned ? progress : 0}%"></div>
+                            <div class="generator-progress-fill ${isActive ? 'animating' : ''}" data-progress="${i}" style="width: ${hasOwned ? progress : 0}%"></div>
                         </div>
                         <div class="generator-stats">
                             <div class="gen-stat">
                                 <span class="gen-stat-label">Production</span>
-                                <span class="gen-stat-value">${formatNumber(production)}/s</span>
+                                <span class="gen-stat-value">+${formatNumber(productionValue)}</span>
                             </div>
                             <div class="gen-stat">
-                                <span class="gen-stat-label">Per Click</span>
-                                <span class="gen-stat-value">${formatNumber(clickValue)}</span>
+                                <span class="gen-stat-label">Time</span>
+                                <span class="gen-stat-value">${productionTime.toFixed(1)}s</span>
                             </div>
                         </div>
                         <div class="generator-actions">
@@ -1785,12 +1826,17 @@
                         const cost = getUpgradeCost(i, tier);
                         const isNext = tier === state.upgradeTier;
                         const canBuy = isNext && gameState.attackPower >= cost;
+                        const upgradeType = getUpgradeType(tier);
+                        const description = upgradeType === 'speed' 
+                            ? `-10% production time for ${gen.name}` 
+                            : `+75% production for ${gen.name}`;
+                        const icon = upgradeType === 'speed' ? '⚡' : '💪';
                         
                         upgradesHtml += `
                             <div class="upgrade-card">
                                 <div class="upgrade-info">
-                                    <h4>${getUpgradeName(i, tier)}</h4>
-                                    <p>+75% production for ${gen.name}</p>
+                                    <h4>${icon} ${getUpgradeName(i, tier)}</h4>
+                                    <p>${description}</p>
                                 </div>
                                 <button class="btn-upgrade-buy" 
                                     ${!canBuy ? 'disabled' : ''} 
@@ -1976,30 +2022,43 @@
             const delta = (now - gameState.lastUpdate) / 1000;
             gameState.lastUpdate = now;
             
-            // Update progress bars (visual only, no auto production)
+            // Update active generators
             GENERATORS.forEach((gen, i) => {
-                if (gameState.generators[i].unlocked && gameState.generators[i].owned > 0) {
-                    // Progress bar cycles every 1 second, affected by speed bonus
-                    const speedMultiplier = 1 + (gameState.speedBonuses[i] * 0.5);
-                    gameState.generatorProgress[i] = (gameState.generatorProgress[i] || 0) + (delta * 100 * speedMultiplier);
+                const state = gameState.generators[i];
+                if (!state.unlocked || state.owned === 0) return;
+                
+                // Auto-clickers automatically activate generators
+                if (gameState.autoClickers[i] && !state.active) {
+                    state.active = true;
+                    state.currentProgress = 0;
+                }
+                
+                // Process active generators
+                if (state.active) {
+                    const productionTime = getGeneratorTime(i);
+                    const progressIncrement = (delta / productionTime) * 100;
+                    state.currentProgress += progressIncrement;
+                    gameState.generatorProgress[i] = state.currentProgress;
                     
-                    if (gameState.generatorProgress[i] >= 100) {
-                        gameState.generatorProgress[i] = gameState.generatorProgress[i] % 100;
+                    // Production complete
+                    if (state.currentProgress >= 100) {
+                        const production = getGeneratorProduction(i);
+                        gameState.attackPower += production;
+                        gameState.totalEarned += production;
+                        
+                        // Reset progress
+                        state.currentProgress = 0;
+                        gameState.generatorProgress[i] = 0;
+                        
+                        // If auto-clicker, keep going; otherwise stop
+                        if (!gameState.autoClickers[i]) {
+                            state.active = false;
+                        }
                     }
                 }
             });
             
             gameState.playTime += delta;
-            
-            // Auto-clickers - simulate clicking on generator to add production burst
-            GENERATORS.forEach((gen, i) => {
-                if (gameState.autoClickers[i] && gameState.generators[i].unlocked && gameState.generators[i].owned > 0) {
-                    // Each auto-clicker adds production equivalent to 1 click per second
-                    const clickBonus = getGeneratorProduction(i) * delta;
-                    gameState.attackPower += clickBonus;
-                    gameState.totalEarned += clickBonus;
-                }
-            });
             
             // Update stats and progress bars every frame
             updateStats();
@@ -2118,30 +2177,39 @@
                 
                 if (offlineTime > 60) { // Only show if away for more than 1 minute
                     // Recalculate production with loaded state - only auto-clicker generators
-                    let totalProduction = 0;
+                    let totalEarnings = 0;
                     loaded.generators.forEach((state, i) => {
                         // Only count generators with auto-clickers
                         if (state.unlocked && state.owned > 0 && loaded.autoClickers?.[i]) {
                             const gen = GENERATORS[i];
-                            const upgradeMultiplier = 1 + (state.upgradeTier * 0.75);
+                            const productionUpgrades = Math.floor((state.upgradeTier + 1) / 2);
+                            const upgradeMultiplier = 1 + (productionUpgrades * 0.75);
                             const speedMultiplier = 1 + ((loaded.speedBonuses?.[i] || 0) * 0.5);
-                            totalProduction += gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * loaded.prestigeMultiplier;
+                            const production = gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * loaded.prestigeMultiplier;
+                            
+                            // Calculate time per cycle
+                            const speedUpgrades = Math.floor(state.upgradeTier / 2);
+                            const speedReduction = Math.pow(0.9, speedUpgrades);
+                            const shopSpeedBonus = 1 / (1 + ((loaded.speedBonuses?.[i] || 0) * 0.25));
+                            const cycleTime = gen.baseTime * speedReduction * shopSpeedBonus;
+                            
+                            // How many cycles completed offline
+                            const cycles = Math.floor(offlineTime / cycleTime);
+                            totalEarnings += production * cycles * 0.5; // 50% offline efficiency
                         }
                     });
                     
-                    const offlineEarnings = totalProduction * offlineTime * 0.5; // 50% offline efficiency
-                    
-                    if (offlineEarnings > 0) {
+                    if (totalEarnings > 0) {
                         gameState = { ...gameState, ...loaded };
-                        gameState.attackPower += offlineEarnings;
-                        gameState.totalEarned += offlineEarnings;
+                        gameState.attackPower += totalEarnings;
+                        gameState.totalEarned += totalEarnings;
                         gameState.lastUpdate = Date.now();
                         
                         const timeStr = offlineTime > 3600 
                             ? `${Math.floor(offlineTime / 3600)}h ${Math.floor((offlineTime % 3600) / 60)}m`
                             : `${Math.floor(offlineTime / 60)}m`;
                         
-                        showToast(`💤 Welcome back! Earned ${formatNumber(offlineEarnings)} AP while away (${timeStr})`);
+                        showToast(`💤 Welcome back! Earned ${formatNumber(totalEarnings)} AP while away (${timeStr})`);
                         return true;
                     } else {
                         // Still load the game even if no offline earnings
