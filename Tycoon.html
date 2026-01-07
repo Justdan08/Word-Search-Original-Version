@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attack Power Tycoon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0c10;
+            --bg-panel: #12151c;
+            --bg-card: #1a1e28;
+            --bg-hover: #252a38;
+            --accent-red: #ff3c3c;
+            --accent-orange: #ff6b35;
+            --accent-yellow: #ffc107;
+            --accent-green: #00e676;
+            --accent-cyan: #00bcd4;
+            --accent-blue: #2979ff;
+            --accent-purple: #9c27b0;
+            --text-primary: #ffffff;
+            --text-secondary: #8892a4;
+            --text-muted: #4a5568;
+            --border-color: #2a3042;
+            --danger: #f44336;
+            --success: #4caf50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(255, 60, 60, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(41, 121, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, var(--bg-panel) 0%, transparent 100%);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .game-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-orange) 50%, var(--accent-yellow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 60, 60, 0.5);
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-yellow);
+        }
+
+        .stat-value.attack-power {
+            color: var(--accent-red);
+            text-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
+        }
+
+        .stat-value.multiplier {
+            color: var(--accent-green);
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-header {
+            padding: 0.5rem 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-header:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-cyan);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-red);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--bg-hover);
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        .tab-btn.active::before {
+            transform: scaleX(1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Generators Panel */
+        .generators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1rem;
+        }
+
+        .generator-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-red), var(--accent-orange));
+            opacity: 0.7;
+        }
+
+        .generator-card:hover {
+            border-color: var(--accent-red);
+            box-shadow: 0 8px 24px rgba(255, 60, 60, 0.15);
+        }
+
+        .generator-card.locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .generator-card.locked::after {
+            content: '🔒 LOCKED';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--text-muted);
+            background: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        .generator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .generator-info {
+            flex: 1;
+        }
+
+        .generator-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .generator-tier {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .generator-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .generator-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 6px;
+        }
+
+        .gen-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gen-stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .gen-stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+        }
+
+        .generator-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-generator {
+            flex: 1;
+            padding: 0.6rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-buy {
+            background: linear-gradient(135deg, var(--accent-green), #00c853);
+            color: var(--bg-dark);
+        }
+
+        .btn-buy:hover:not(:disabled) {
+            filter: brightness(1.1);
+        }
+
+        .btn-upgrade {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: var(--bg-dark);
+        }
+
+        .btn-upgrade:hover:not(:disabled) {
+            filter: brightness(1.1);
+        }
+
+        .btn-generator:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-cost {
+            font-size: 0.7rem;
+            opacity: 0.9;
+        }
+
+        .generator-progress {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-dark);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .generator-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            border-radius: 3px;
+            will-change: width;
+        }
+
+        /* Upgrades Panel */
+        .upgrades-section {
+            margin-bottom: 2rem;
+        }
+
+        .upgrades-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .upgrade-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upgrade-card:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .upgrade-card.owned {
+            border-color: var(--accent-green);
+            background: rgba(0, 230, 118, 0.05);
+        }
+
+        .upgrade-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .upgrade-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-upgrade-buy {
+            padding: 0.5rem 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 4px;
+            background: var(--accent-purple);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-upgrade-buy:hover:not(:disabled) {
+            background: #7b1fa2;
+            transform: scale(1.05);
+        }
+
+        .btn-upgrade-buy:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-upgrade-buy.owned {
+            background: var(--accent-green);
+            cursor: default;
+        }
+
+        /* Battle Panel */
+        .battle-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .battle-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .battle-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-red);
+            margin-bottom: 0.5rem;
+        }
+
+        .battle-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .battle-stat {
+            text-align: center;
+        }
+
+        .battle-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .battle-stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--accent-yellow);
+        }
+
+        .enemies-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .enemy-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .enemy-card.defeated {
+            opacity: 0.5;
+            border-color: var(--accent-green);
+        }
+
+        .enemy-card.current {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 15px rgba(255, 60, 60, 0.3);
+        }
+
+        .enemy-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .enemy-hp {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .enemy-reward {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+        }
+
+        .hp-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-orange));
+            transition: width 0.3s;
+        }
+
+        .btn-battle {
+            width: 100%;
+            padding: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-battle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-battle:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn-battle:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 60, 60, 0.5);
+        }
+
+        .btn-battle:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Right Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sidebar-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .sidebar-panel h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .production-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .production-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            background: var(--bg-dark);
+            border-radius: 4px;
+        }
+
+        .production-item span:first-child {
+            color: var(--text-secondary);
+        }
+
+        .production-item span:last-child {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-yellow);
+        }
+
+        /* Shop Items */
+        .shop-item {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shop-item-info h4 {
+            font-size: 0.85rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .shop-item-info p {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-shop {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            background: var(--accent-orange);
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-shop:hover:not(:disabled) {
+            background: var(--accent-yellow);
+        }
+
+        .btn-shop:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-shop.owned {
+            background: var(--accent-green);
+        }
+
+        /* Floating damage numbers */
+        .damage-float {
+            position: fixed;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            text-shadow: 0 0 10px rgba(255, 60, 60, 0.8);
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(1.5);
+            }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Prestige overlay */
+        .prestige-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .prestige-overlay.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .prestige-content {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .prestige-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: var(--accent-yellow);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(255, 193, 7, 0.8);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .prestige-details {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .prestige-bonus {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--accent-green);
+            margin-bottom: 2rem;
+        }
+
+        .btn-prestige-confirm {
+            padding: 1rem 3rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-prestige-confirm:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(255, 193, 7, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-bar {
+                justify-content: center;
+            }
+
+            .generators-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="game-title">⚔️ Attack Power Tycoon</h1>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Attack Power</span>
+                    <span class="stat-value attack-power" id="attack-power">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Per Second</span>
+                    <span class="stat-value" id="per-second">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Prestige Multiplier</span>
+                    <span class="stat-value multiplier" id="multiplier">1.00x</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Enemies Defeated</span>
+                    <span class="stat-value" id="enemies-defeated">0</span>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <button class="btn-header" onclick="saveGame()">💾 Save</button>
+                <button class="btn-header" onclick="loadGame()">📂 Load</button>
+                <button class="btn-header" onclick="resetGame()">🔄 Reset</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="content-area">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="generators">🏭 Generators</button>
+                <button class="tab-btn" data-tab="upgrades">⬆️ Upgrades</button>
+                <button class="tab-btn" data-tab="shop">🛒 Shop</button>
+                <button class="tab-btn" data-tab="battle">⚔️ Battle</button>
+            </div>
+
+            <div id="generators" class="tab-content active">
+                <div class="generators-grid" id="generators-grid"></div>
+            </div>
+
+            <div id="upgrades" class="tab-content">
+                <div id="upgrades-container"></div>
+            </div>
+
+            <div id="shop" class="tab-content">
+                <div class="upgrades-section">
+                    <h3>🤖 Auto-Clickers</h3>
+                    <div id="auto-clickers-grid" class="upgrades-grid"></div>
+                </div>
+                <div class="upgrades-section">
+                    <h3>⚡ Speed Bonuses</h3>
+                    <div id="speed-bonuses-grid" class="upgrades-grid"></div>
+                </div>
+            </div>
+
+            <div id="battle" class="tab-content">
+                <div class="battle-container">
+                    <div class="battle-header">
+                        <h2>⚔️ BATTLE ARENA</h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Spend your Attack Power to defeat enemies and earn permanent multipliers!
+                        </p>
+                        <div class="battle-stats">
+                            <div class="battle-stat">
+                                <div class="battle-stat-label">Available Power</div>
+                                <div class="battle-stat-value" id="battle-power">0</div>
+                            </div>
+                            <div class="battle-stat">
+                                <div class="battle-stat-label">Potential Bonus</div>
+                                <div class="battle-stat-value" id="potential-bonus">+0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="enemies-list" id="enemies-list"></div>
+                    <button class="btn-battle" id="btn-battle" onclick="startBattle()">
+                        ⚔️ INITIATE BATTLE
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <aside class="sidebar">
+            <div class="sidebar-panel">
+                <h3>📊 Production Summary</h3>
+                <div class="production-list" id="production-list"></div>
+            </div>
+            <div class="sidebar-panel">
+                <h3>🏆 Statistics</h3>
+                <div class="production-list">
+                    <div class="production-item">
+                        <span>Total Earned</span>
+                        <span id="stat-total-earned">0</span>
+                    </div>
+                    <div class="production-item">
+                        <span>Battles Won</span>
+                        <span id="stat-battles-won">0</span>
+                    </div>
+                    <div class="production-item">
+                        <span>Play Time</span>
+                        <span id="stat-play-time">0:00:00</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="prestige-overlay" id="prestige-overlay">
+        <div class="prestige-content">
+            <h2 class="prestige-title">🎖️ VICTORY!</h2>
+            <p class="prestige-details" id="prestige-details">You defeated X enemies!</p>
+            <p class="prestige-bonus" id="prestige-bonus-display">New Multiplier: 1.00x</p>
+            <button class="btn-prestige-confirm" onclick="confirmPrestige()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GAME DATA ====================
+        const GENERATORS = [
+            { id: 0, name: "New Recruit", icon: "🎖️", baseCost: 10, baseProduction: 1, unlockCost: 0 },
+            { id: 1, name: "Gunsmith", icon: "🔫", baseCost: 100, baseProduction: 5, unlockCost: 500 },
+            { id: 2, name: "Combat Training", icon: "🎯", baseCost: 1000, baseProduction: 25, unlockCost: 5000 },
+            { id: 3, name: "Vehicle Workshop", icon: "🚛", baseCost: 10000, baseProduction: 100, unlockCost: 50000 },
+            { id: 4, name: "Mobile Command Base", icon: "📡", baseCost: 100000, baseProduction: 400, unlockCost: 500000 },
+            { id: 5, name: "Hangar", icon: "✈️", baseCost: 1000000, baseProduction: 1600, unlockCost: 5000000 },
+            { id: 6, name: "Bomb Factory", icon: "💣", baseCost: 10000000, baseProduction: 6400, unlockCost: 50000000 },
+            { id: 7, name: "Drone Pilot", icon: "🛸", baseCost: 100000000, baseProduction: 25000, unlockCost: 500000000 },
+            { id: 8, name: "Nuclear Research", icon: "☢️", baseCost: 1000000000, baseProduction: 100000, unlockCost: 5000000000 },
+            { id: 9, name: "WMD Production", icon: "🚀", baseCost: 10000000000, baseProduction: 500000, unlockCost: 50000000000 }
+        ];
+
+        const UPGRADE_NAMES = [
+            ["Sign-on Bonus", "Recruitment Drive", "Training Camp", "Barracks Expansion", "Elite Squad"],
+            ["Better Tools", "Precision Parts", "Assembly Line", "Master Craftsman", "Legendary Forge"],
+            ["Drill Sergeant", "Combat Sim", "Live Fire", "Special Ops", "Supersoldier Program"],
+            ["Turbo Engines", "Armor Plating", "Heavy Artillery", "Prototype Tech", "Mech Warriors"],
+            ["Satellite Link", "AI Coordination", "Tactical Network", "Global Reach", "Quantum Comms"],
+            ["Runway Extension", "Stealth Tech", "Supersonic Jets", "Orbital Craft", "Space Fleet"],
+            ["Bigger Booms", "Cluster Tech", "Bunker Busters", "Thermobaric", "Antimatter Cores"],
+            ["Swarm AI", "Cloaking Device", "Laser Targeting", "Autonomous Fleet", "Skynet Protocol"],
+            ["Enrichment", "Fusion Core", "Particle Beam", "Zero Point", "Stellar Reactor"],
+            ["Global Strike", "Orbital Cannon", "Planet Cracker", "Doomsday Device", "Galaxy Ender"]
+        ];
+
+        const ENEMIES = [
+            { name: "Scout Patrol", hp: 1000, reward: 0.05 },
+            { name: "Guard Post", hp: 5000, reward: 0.05 },
+            { name: "Outpost", hp: 25000, reward: 0.10 },
+            { name: "Watchtower", hp: 100000, reward: 0.10 },
+            { name: "Bunker", hp: 500000, reward: 0.15 },
+            { name: "Forward Base", hp: 2500000, reward: 0.15 },
+            { name: "Military Camp", hp: 10000000, reward: 0.20 },
+            { name: "Armored Division", hp: 50000000, reward: 0.20 },
+            { name: "Fortress", hp: 250000000, reward: 0.25 },
+            { name: "Command Center", hp: 1000000000, reward: 0.25 },
+            { name: "Underground Complex", hp: 5000000000, reward: 0.30 },
+            { name: "Nuclear Silo", hp: 25000000000, reward: 0.30 },
+            { name: "Orbital Station", hp: 100000000000, reward: 0.35 },
+            { name: "Moon Base", hp: 500000000000, reward: 0.35 },
+            { name: "Death Star", hp: 2500000000000, reward: 0.50 }
+        ];
+
+        // ==================== GAME STATE ====================
+        let gameState = {
+            attackPower: 10,
+            totalEarned: 0,
+            prestigeMultiplier: 1,
+            enemiesDefeated: 0,
+            battlesWon: 0,
+            playTime: 0,
+            generators: GENERATORS.map(g => ({
+                owned: 0,
+                upgradeTier: 0,
+                unlocked: g.id === 0
+            })),
+            autoClickers: GENERATORS.map(() => false),
+            speedBonuses: GENERATORS.map(() => 0),
+            generatorProgress: GENERATORS.map(() => 0),
+            lastUpdate: Date.now()
+        };
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatNumber(num) {
+            if (num < 1000) return Math.floor(num).toString();
+            
+            const suffixes = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+            const tier = Math.floor(Math.log10(Math.abs(num)) / 3);
+            
+            if (tier >= suffixes.length) {
+                return num.toExponential(2);
+            }
+            
+            const scaled = num / Math.pow(1000, tier);
+            return scaled.toFixed(scaled < 10 ? 2 : scaled < 100 ? 1 : 0) + suffixes[tier];
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ==================== GENERATOR FUNCTIONS ====================
+        function getGeneratorCost(genIndex) {
+            const gen = GENERATORS[genIndex];
+            const owned = gameState.generators[genIndex].owned;
+            return Math.floor(gen.baseCost * Math.pow(1.15, owned));
+        }
+
+        function getGeneratorProduction(genIndex) {
+            const gen = GENERATORS[genIndex];
+            const state = gameState.generators[genIndex];
+            const upgradeMultiplier = 1 + (state.upgradeTier * 0.25);
+            const speedMultiplier = 1 + (gameState.speedBonuses[genIndex] * 0.5);
+            return gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * gameState.prestigeMultiplier;
+        }
+
+        function getTotalProduction() {
+            let total = 0;
+            for (let i = 0; i < GENERATORS.length; i++) {
+                if (gameState.generators[i].unlocked) {
+                    total += getGeneratorProduction(i);
+                }
+            }
+            return total;
+        }
+
+        function buyGenerator(genIndex) {
+            const cost = getGeneratorCost(genIndex);
+            if (gameState.attackPower >= cost) {
+                gameState.attackPower -= cost;
+                gameState.generators[genIndex].owned++;
+                updateUI();
+            }
+        }
+
+        function unlockGenerator(genIndex) {
+            const gen = GENERATORS[genIndex];
+            if (gameState.attackPower >= gen.unlockCost && !gameState.generators[genIndex].unlocked) {
+                gameState.attackPower -= gen.unlockCost;
+                gameState.generators[genIndex].unlocked = true;
+                showToast(`🔓 Unlocked ${gen.name}!`);
+                updateUI();
+            }
+        }
+
+        // ==================== UPGRADE FUNCTIONS ====================
+        function getUpgradeCost(genIndex, tier) {
+            const gen = GENERATORS[genIndex];
+            return Math.floor(gen.baseCost * 10 * Math.pow(3, tier));
+        }
+
+        function getUpgradeName(genIndex, tier) {
+            const baseNames = UPGRADE_NAMES[genIndex];
+            const baseName = baseNames[tier % baseNames.length];
+            const level = Math.floor(tier / baseNames.length) + 1;
+            return level > 1 ? `${baseName} ${level}` : baseName;
+        }
+
+        function buyUpgrade(genIndex) {
+            const state = gameState.generators[genIndex];
+            if (state.upgradeTier >= 50) return;
+            
+            const cost = getUpgradeCost(genIndex, state.upgradeTier);
+            if (gameState.attackPower >= cost) {
+                gameState.attackPower -= cost;
+                state.upgradeTier++;
+                showToast(`⬆️ ${GENERATORS[genIndex].name} upgraded to Tier ${state.upgradeTier}!`);
+                updateUI();
+            }
+        }
+
+        // ==================== SHOP FUNCTIONS ====================
+        function getAutoClickerCost(genIndex) {
+            return GENERATORS[genIndex].baseCost * 100;
+        }
+
+        function buyAutoClicker(genIndex) {
+            const cost = getAutoClickerCost(genIndex);
+            if (gameState.attackPower >= cost && !gameState.autoClickers[genIndex]) {
+                gameState.attackPower -= cost;
+                gameState.autoClickers[genIndex] = true;
+                showToast(`🤖 Auto-clicker for ${GENERATORS[genIndex].name} activated!`);
+                updateUI();
+            }
+        }
+
+        function getSpeedBonusCost(genIndex, level) {
+            return GENERATORS[genIndex].baseCost * 50 * Math.pow(5, level);
+        }
+
+        function buySpeedBonus(genIndex) {
+            const level = gameState.speedBonuses[genIndex];
+            if (level >= 10) return;
+            
+            const cost = getSpeedBonusCost(genIndex, level);
+            if (gameState.attackPower >= cost) {
+                gameState.attackPower -= cost;
+                gameState.speedBonuses[genIndex]++;
+                showToast(`⚡ ${GENERATORS[genIndex].name} speed bonus increased!`);
+                updateUI();
+            }
+        }
+
+        // ==================== BATTLE FUNCTIONS ====================
+        function calculateBattleResults() {
+            let power = gameState.attackPower;
+            let defeated = 0;
+            let currentEnemy = gameState.enemiesDefeated;
+            
+            while (currentEnemy < ENEMIES.length && power >= ENEMIES[currentEnemy].hp) {
+                power -= ENEMIES[currentEnemy].hp;
+                defeated++;
+                currentEnemy++;
+            }
+            
+            return { defeated, newTotal: gameState.enemiesDefeated + defeated };
+        }
+
+        function calculatePrestigeMultiplier(enemiesDefeated) {
+            let multiplier = 1;
+            for (let i = 0; i < enemiesDefeated; i++) {
+                multiplier += ENEMIES[i].reward;
+            }
+            return multiplier;
+        }
+
+        function startBattle() {
+            const results = calculateBattleResults();
+            
+            if (results.defeated === 0) {
+                showToast("❌ Not enough Attack Power to defeat any enemies!");
+                return;
+            }
+
+            // Show prestige overlay
+            const overlay = document.getElementById('prestige-overlay');
+            const details = document.getElementById('prestige-details');
+            const bonusDisplay = document.getElementById('prestige-bonus-display');
+            
+            const newMultiplier = calculatePrestigeMultiplier(results.newTotal);
+            
+            details.textContent = `You defeated ${results.defeated} enemies!`;
+            bonusDisplay.textContent = `New Multiplier: ${newMultiplier.toFixed(2)}x`;
+            
+            overlay.classList.add('active');
+            
+            // Store results for confirmation
+            window.pendingPrestige = {
+                enemiesDefeated: results.newTotal,
+                multiplier: newMultiplier
+            };
+        }
+
+        function confirmPrestige() {
+            const prestige = window.pendingPrestige;
+            
+            // Reset generators
+            gameState.attackPower = 0;
+            gameState.generators = GENERATORS.map((g, i) => ({
+                owned: 0,
+                upgradeTier: 0,
+                unlocked: i === 0
+            }));
+            
+            // Keep shop upgrades
+            // Update prestige stats
+            gameState.enemiesDefeated = prestige.enemiesDefeated;
+            gameState.prestigeMultiplier = prestige.multiplier;
+            gameState.battlesWon++;
+            
+            // Hide overlay
+            document.getElementById('prestige-overlay').classList.remove('active');
+            
+            showToast(`🎖️ Prestige complete! New multiplier: ${prestige.multiplier.toFixed(2)}x`);
+            updateUI();
+        }
+
+        // ==================== UI RENDERING ====================
+        function renderGenerators() {
+            const grid = document.getElementById('generators-grid');
+            grid.innerHTML = '';
+            
+            GENERATORS.forEach((gen, i) => {
+                const state = gameState.generators[i];
+                const cost = getGeneratorCost(i);
+                const production = getGeneratorProduction(i);
+                const canBuy = gameState.attackPower >= cost;
+                const canUnlock = gameState.attackPower >= gen.unlockCost;
+                
+                const card = document.createElement('div');
+                card.className = `generator-card ${!state.unlocked ? 'locked' : ''}`;
+                
+                if (state.unlocked) {
+                    const progress = gameState.generatorProgress[i] || 0;
+                    card.innerHTML = `
+                        <div class="generator-header">
+                            <div class="generator-info">
+                                <div class="generator-name">${gen.name}</div>
+                                <div class="generator-tier">Tier ${state.upgradeTier}/50 • Owned: ${state.owned}</div>
+                            </div>
+                            <div class="generator-icon">${gen.icon}</div>
+                        </div>
+                        <div class="generator-progress">
+                            <div class="generator-progress-fill" data-progress="${i}" style="width: ${state.owned > 0 ? progress : 0}%"></div>
+                        </div>
+                        <div class="generator-stats">
+                            <div class="gen-stat">
+                                <span class="gen-stat-label">Production</span>
+                                <span class="gen-stat-value">${formatNumber(production)}/s</span>
+                            </div>
+                            <div class="gen-stat">
+                                <span class="gen-stat-label">Base Output</span>
+                                <span class="gen-stat-value">${formatNumber(gen.baseProduction)}</span>
+                            </div>
+                        </div>
+                        <div class="generator-actions">
+                            <button class="btn-generator btn-buy" ${!canBuy ? 'disabled' : ''} onclick="buyGenerator(${i})">
+                                Buy +1
+                                <span class="btn-cost">${formatNumber(cost)} AP</span>
+                            </button>
+                            <button class="btn-generator btn-upgrade" ${state.upgradeTier >= 50 || gameState.attackPower < getUpgradeCost(i, state.upgradeTier) ? 'disabled' : ''} onclick="buyUpgrade(${i})">
+                                Upgrade
+                                <span class="btn-cost">${state.upgradeTier >= 50 ? 'MAX' : formatNumber(getUpgradeCost(i, state.upgradeTier)) + ' AP'}</span>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="generator-header">
+                            <div class="generator-info">
+                                <div class="generator-name">${gen.name}</div>
+                                <div class="generator-tier">Locked</div>
+                            </div>
+                            <div class="generator-icon">${gen.icon}</div>
+                        </div>
+                        <div class="generator-stats">
+                            <div class="gen-stat">
+                                <span class="gen-stat-label">Base Production</span>
+                                <span class="gen-stat-value">${formatNumber(gen.baseProduction)}/s</span>
+                            </div>
+                            <div class="gen-stat">
+                                <span class="gen-stat-label">Unlock Cost</span>
+                                <span class="gen-stat-value">${formatNumber(gen.unlockCost)} AP</span>
+                            </div>
+                        </div>
+                        <div class="generator-actions">
+                            <button class="btn-generator btn-buy" ${!canUnlock ? 'disabled' : ''} onclick="unlockGenerator(${i})" style="flex: 1;">
+                                🔓 Unlock
+                                <span class="btn-cost">${formatNumber(gen.unlockCost)} AP</span>
+                            </button>
+                        </div>
+                    `;
+                    card.classList.remove('locked');
+                    card.style.opacity = canUnlock ? '1' : '0.6';
+                }
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('upgrades-container');
+            container.innerHTML = '';
+            
+            GENERATORS.forEach((gen, i) => {
+                if (!gameState.generators[i].unlocked) return;
+                
+                const state = gameState.generators[i];
+                const section = document.createElement('div');
+                section.className = 'upgrades-section';
+                
+                let upgradesHtml = '';
+                const startTier = Math.max(0, state.upgradeTier - 2);
+                const endTier = Math.min(50, state.upgradeTier + 5);
+                
+                for (let tier = startTier; tier < endTier; tier++) {
+                    const cost = getUpgradeCost(i, tier);
+                    const owned = tier < state.upgradeTier;
+                    const canBuy = !owned && tier === state.upgradeTier && gameState.attackPower >= cost;
+                    
+                    upgradesHtml += `
+                        <div class="upgrade-card ${owned ? 'owned' : ''}">
+                            <div class="upgrade-info">
+                                <h4>${getUpgradeName(i, tier)}</h4>
+                                <p>+25% production for ${gen.name}</p>
+                            </div>
+                            <button class="btn-upgrade-buy ${owned ? 'owned' : ''}" 
+                                ${!canBuy && !owned ? 'disabled' : ''} 
+                                ${owned ? '' : `onclick="buyUpgrade(${i})"`}>
+                                ${owned ? '✓ Owned' : formatNumber(cost) + ' AP'}
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                section.innerHTML = `
+                    <h3>${gen.icon} ${gen.name} Upgrades (${state.upgradeTier}/50)</h3>
+                    <div class="upgrades-grid">${upgradesHtml}</div>
+                `;
+                
+                container.appendChild(section);
+            });
+        }
+
+        function renderShop() {
+            // Auto-clickers
+            const autoGrid = document.getElementById('auto-clickers-grid');
+            autoGrid.innerHTML = '';
+            
+            GENERATORS.forEach((gen, i) => {
+                if (!gameState.generators[i].unlocked) return;
+                
+                const owned = gameState.autoClickers[i];
+                const cost = getAutoClickerCost(i);
+                const canBuy = !owned && gameState.attackPower >= cost;
+                
+                autoGrid.innerHTML += `
+                    <div class="upgrade-card ${owned ? 'owned' : ''}">
+                        <div class="upgrade-info">
+                            <h4>${gen.icon} ${gen.name} Auto-Buyer</h4>
+                            <p>Automatically purchases ${gen.name} when affordable</p>
+                        </div>
+                        <button class="btn-upgrade-buy ${owned ? 'owned' : ''}" 
+                            ${!canBuy && !owned ? 'disabled' : ''} 
+                            ${owned ? '' : `onclick="buyAutoClicker(${i})"`}>
+                            ${owned ? '✓ Active' : formatNumber(cost) + ' AP'}
+                        </button>
+                    </div>
+                `;
+            });
+            
+            // Speed bonuses
+            const speedGrid = document.getElementById('speed-bonuses-grid');
+            speedGrid.innerHTML = '';
+            
+            GENERATORS.forEach((gen, i) => {
+                if (!gameState.generators[i].unlocked) return;
+                
+                const level = gameState.speedBonuses[i];
+                const maxed = level >= 10;
+                const cost = getSpeedBonusCost(i, level);
+                const canBuy = !maxed && gameState.attackPower >= cost;
+                
+                speedGrid.innerHTML += `
+                    <div class="upgrade-card">
+                        <div class="upgrade-info">
+                            <h4>${gen.icon} ${gen.name} Speed (${level}/10)</h4>
+                            <p>+50% production per level (Current: +${level * 50}%)</p>
+                        </div>
+                        <button class="btn-upgrade-buy ${maxed ? 'owned' : ''}" 
+                            ${!canBuy && !maxed ? 'disabled' : ''} 
+                            ${maxed ? '' : `onclick="buySpeedBonus(${i})"`}>
+                            ${maxed ? 'MAX' : formatNumber(cost) + ' AP'}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderBattle() {
+            const list = document.getElementById('enemies-list');
+            list.innerHTML = '';
+            
+            const results = calculateBattleResults();
+            let powerLeft = gameState.attackPower;
+            
+            ENEMIES.forEach((enemy, i) => {
+                const defeated = i < gameState.enemiesDefeated;
+                const current = i === gameState.enemiesDefeated;
+                const canDamage = i >= gameState.enemiesDefeated && i < gameState.enemiesDefeated + results.defeated + 1;
+                
+                let hpPercent = 100;
+                if (defeated) {
+                    hpPercent = 0;
+                } else if (current || canDamage) {
+                    let damage = 0;
+                    for (let j = gameState.enemiesDefeated; j < i; j++) {
+                        damage += ENEMIES[j].hp;
+                    }
+                    const remainingPower = gameState.attackPower - damage;
+                    if (remainingPower > 0) {
+                        const hpLeft = Math.max(0, enemy.hp - remainingPower);
+                        hpPercent = (hpLeft / enemy.hp) * 100;
+                    }
+                }
+                
+                list.innerHTML += `
+                    <div class="enemy-card ${defeated ? 'defeated' : ''} ${current ? 'current' : ''}">
+                        <div class="enemy-info" style="flex: 1;">
+                            <h4>${defeated ? '💀' : current ? '⚔️' : '🎯'} ${enemy.name}</h4>
+                            <div class="enemy-hp">HP: ${formatNumber(enemy.hp)}</div>
+                            <div class="hp-bar">
+                                <div class="hp-fill" style="width: ${hpPercent}%"></div>
+                            </div>
+                        </div>
+                        <div class="enemy-reward">+${(enemy.reward * 100).toFixed(0)}%</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('battle-power').textContent = formatNumber(gameState.attackPower);
+            document.getElementById('potential-bonus').textContent = results.defeated > 0 
+                ? `+${((calculatePrestigeMultiplier(results.newTotal) - gameState.prestigeMultiplier) * 100).toFixed(0)}%`
+                : '+0%';
+            document.getElementById('btn-battle').disabled = results.defeated === 0;
+        }
+
+        function renderProductionSummary() {
+            const list = document.getElementById('production-list');
+            list.innerHTML = '';
+            
+            GENERATORS.forEach((gen, i) => {
+                if (!gameState.generators[i].unlocked || gameState.generators[i].owned === 0) return;
+                
+                const production = getGeneratorProduction(i);
+                list.innerHTML += `
+                    <div class="production-item">
+                        <span>${gen.icon} ${gen.name}</span>
+                        <span>${formatNumber(production)}/s</span>
+                    </div>
+                `;
+            });
+            
+            if (list.innerHTML === '') {
+                list.innerHTML = '<div class="production-item"><span>No production yet</span><span>-</span></div>';
+            }
+        }
+
+        function updateProgressBars() {
+            GENERATORS.forEach((gen, i) => {
+                const progressFill = document.querySelector(`[data-progress="${i}"]`);
+                if (progressFill && gameState.generators[i].owned > 0) {
+                    progressFill.style.width = `${gameState.generatorProgress[i] || 0}%`;
+                }
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('attack-power').textContent = formatNumber(gameState.attackPower);
+            document.getElementById('per-second').textContent = formatNumber(getTotalProduction());
+            document.getElementById('multiplier').textContent = gameState.prestigeMultiplier.toFixed(2) + 'x';
+            document.getElementById('enemies-defeated').textContent = gameState.enemiesDefeated;
+            document.getElementById('stat-total-earned').textContent = formatNumber(gameState.totalEarned);
+            document.getElementById('stat-battles-won').textContent = gameState.battlesWon;
+            
+            const hours = Math.floor(gameState.playTime / 3600);
+            const mins = Math.floor((gameState.playTime % 3600) / 60);
+            const secs = Math.floor(gameState.playTime % 60);
+            document.getElementById('stat-play-time').textContent = 
+                `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateUI() {
+            updateStats();
+            renderGenerators();
+            renderUpgrades();
+            renderShop();
+            renderBattle();
+            renderProductionSummary();
+        }
+
+        // ==================== GAME LOOP ====================
+        let lastFullUpdate = 0;
+        
+        function gameLoop() {
+            const now = Date.now();
+            const delta = (now - gameState.lastUpdate) / 1000;
+            gameState.lastUpdate = now;
+            
+            // Update progress bars and add production
+            let totalProduction = 0;
+            GENERATORS.forEach((gen, i) => {
+                if (gameState.generators[i].unlocked && gameState.generators[i].owned > 0) {
+                    const production = getGeneratorProduction(i);
+                    totalProduction += production;
+                    
+                    // Progress bar cycles every 1 second, affected by speed bonus
+                    const speedMultiplier = 1 + (gameState.speedBonuses[i] * 0.5);
+                    gameState.generatorProgress[i] = (gameState.generatorProgress[i] || 0) + (delta * 100 * speedMultiplier);
+                    
+                    if (gameState.generatorProgress[i] >= 100) {
+                        gameState.generatorProgress[i] = gameState.generatorProgress[i] % 100;
+                    }
+                }
+            });
+            
+            const production = totalProduction * delta;
+            gameState.attackPower += production;
+            gameState.totalEarned += production;
+            gameState.playTime += delta;
+            
+            // Auto-clickers
+            GENERATORS.forEach((gen, i) => {
+                if (gameState.autoClickers[i] && gameState.generators[i].unlocked) {
+                    const cost = getGeneratorCost(i);
+                    if (gameState.attackPower >= cost) {
+                        gameState.attackPower -= cost;
+                        gameState.generators[i].owned++;
+                    }
+                }
+            });
+            
+            // Update stats and progress bars every frame
+            updateStats();
+            updateProgressBars();
+            
+            // Full UI update only every 500ms to keep buttons responsive
+            if (now - lastFullUpdate > 500) {
+                lastFullUpdate = now;
+                renderGenerators();
+                renderUpgrades();
+                renderShop();
+                renderBattle();
+                renderProductionSummary();
+            }
+        }
+
+        // ==================== SAVE/LOAD ====================
+        function saveGame() {
+            localStorage.setItem('attackPowerTycoon', JSON.stringify(gameState));
+            showToast('💾 Game saved!');
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('attackPowerTycoon');
+            if (saved) {
+                const loaded = JSON.parse(saved);
+                gameState = { ...gameState, ...loaded };
+                gameState.lastUpdate = Date.now();
+                showToast('📂 Game loaded!');
+                updateUI();
+            } else {
+                showToast('❌ No save found!');
+            }
+        }
+
+        function resetGame() {
+            if (confirm('Are you sure you want to reset ALL progress? This cannot be undone!')) {
+                localStorage.removeItem('attackPowerTycoon');
+                location.reload();
+            }
+        }
+
+        // ==================== TAB NAVIGATION ====================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ==================== OFFLINE PROGRESS ====================
+        function calculateOfflineProgress() {
+            const saved = localStorage.getItem('attackPowerTycoon');
+            if (saved) {
+                const loaded = JSON.parse(saved);
+                const offlineTime = (Date.now() - loaded.lastUpdate) / 1000;
+                
+                if (offlineTime > 60) { // Only show if away for more than 1 minute
+                    // Recalculate production with loaded state
+                    let totalProduction = 0;
+                    loaded.generators.forEach((state, i) => {
+                        if (state.unlocked) {
+                            const gen = GENERATORS[i];
+                            const upgradeMultiplier = 1 + (state.upgradeTier * 0.25);
+                            const speedMultiplier = 1 + ((loaded.speedBonuses?.[i] || 0) * 0.5);
+                            totalProduction += gen.baseProduction * state.owned * upgradeMultiplier * speedMultiplier * loaded.prestigeMultiplier;
+                        }
+                    });
+                    
+                    const offlineEarnings = totalProduction * offlineTime * 0.5; // 50% offline efficiency
+                    
+                    if (offlineEarnings > 0) {
+                        gameState = { ...gameState, ...loaded };
+                        gameState.attackPower += offlineEarnings;
+                        gameState.totalEarned += offlineEarnings;
+                        gameState.lastUpdate = Date.now();
+                        
+                        const timeStr = offlineTime > 3600 
+                            ? `${Math.floor(offlineTime / 3600)}h ${Math.floor((offlineTime % 3600) / 60)}m`
+                            : `${Math.floor(offlineTime / 60)}m`;
+                        
+                        showToast(`💤 Welcome back! Earned ${formatNumber(offlineEarnings)} AP while away (${timeStr})`);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            // Try to load saved game with offline progress
+            const saved = localStorage.getItem('attackPowerTycoon');
+            if (saved) {
+                if (!calculateOfflineProgress()) {
+                    loadGame();
+                }
+            }
+            
+            updateUI();
+            
+            // Game loop - 100ms intervals for game logic
+            setInterval(gameLoop, 100);
+            
+            // Smooth progress bar updates with requestAnimationFrame
+            function smoothProgressUpdate() {
+                updateProgressBars();
+                requestAnimationFrame(smoothProgressUpdate);
+            }
+            requestAnimationFrame(smoothProgressUpdate);
+            
+            // Auto-save every 30 seconds
+            setInterval(saveGame, 30000);
+        }
+
+        // Start the game
+        init();
+    </script>
+</body>
+</html>
