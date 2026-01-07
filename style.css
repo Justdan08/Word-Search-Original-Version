@@ -72,7 +72,7 @@ h1 {
 #reset-button {
   margin: 15px auto;
   padding: 10px 20px;
-  background-color: #4984B8;
+  background-color: #2e7d32; /* Darker green */
   color: white;
   border: none;
   border-radius: 8px; /* Rounded button corners */
@@ -82,7 +82,7 @@ h1 {
 }
 
 #reset-button:hover {
-  background-color: #3a6d9e;
+  background-color: #1b5e20; /* Even darker green on hover */
 }
 
 /* Position Timer at the top-left above the puzzle grid */
@@ -113,7 +113,7 @@ h1 {
   display: block;
   margin: 10px;
   padding: 10px;
-  background-color: #4984B8;
+  background-color: #2e7d32; /* Darker green */
   color: white;
   text-decoration: none;
   border-radius: 8px; /* Rounded link buttons */
@@ -122,12 +122,12 @@ h1 {
 }
 
 .puzzle-link:hover {
-  background-color: #3a6d9e;
+  background-color: #1b5e20; /* Even darker green on hover */
 }
 
 .nav-links a {
   margin: 0 10px;
-  color: #4984B8;
+  color: #2e7d32; /* Darker green for text links */
   text-decoration: none;
   font-family: 'Quicksand', 'Nunito', sans-serif;
 }
@@ -147,7 +147,7 @@ h1 {
 
 /* Style for the menu button */
 #options-button {
-    background: #4984B8;
+    background: #2e7d32; /* Darker green */
     color: white;
     font-size: 18px;
     padding: 10px;
@@ -158,7 +158,7 @@ h1 {
 }
 
 .options-menu button.active {
-  background-color: #4984B8; /* Blue background */
+  background-color: #2e7d32; /* Darker green background */
   color: white;              /* White text */
 }
 
