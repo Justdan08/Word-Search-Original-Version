@@ -321,6 +321,46 @@
             border: 1px solid var(--border-color);
         }
 
+        .generator-click-btn {
+            font-size: 1.8rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+            border-radius: 8px;
+            border: 2px solid var(--accent-yellow);
+            cursor: pointer;
+            flex-shrink: 0;
+            gap: 0;
+            padding: 0.25rem;
+        }
+
+        .generator-click-btn:hover:not(:disabled) {
+            filter: brightness(1.15);
+            transform: scale(1.05);
+        }
+
+        .generator-click-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .generator-click-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: var(--bg-dark);
+            border-color: var(--border-color);
+        }
+
+        .generator-click-btn .click-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.55rem;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
         .generator-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -978,6 +1018,16 @@
                 height: 40px;
             }
 
+            .generator-click-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+
+            .generator-click-btn .click-value {
+                font-size: 0.5rem;
+            }
+
             .generator-stats {
                 padding: 0.5rem;
                 margin-bottom: 0.75rem;
@@ -1392,6 +1442,18 @@
         };
 
         // ==================== UTILITY FUNCTIONS ====================
+        let lastPurchaseTime = {};
+        const PURCHASE_COOLDOWN = 150; // ms cooldown between purchases
+        
+        function canPurchase(key) {
+            const now = Date.now();
+            if (lastPurchaseTime[key] && now - lastPurchaseTime[key] < PURCHASE_COOLDOWN) {
+                return false;
+            }
+            lastPurchaseTime[key] = now;
+            return true;
+        }
+        
         function formatNumber(num) {
             if (num < 1000) return Math.floor(num).toString();
             
@@ -1441,6 +1503,7 @@
         }
 
         function buyGenerator(genIndex) {
+            if (!canPurchase('gen-' + genIndex)) return;
             const cost = getGeneratorCost(genIndex);
             if (gameState.attackPower >= cost) {
                 gameState.attackPower -= cost;
@@ -1449,7 +1512,23 @@
             }
         }
 
+        function clickGenerator(genIndex) {
+            if (!canPurchase('click-' + genIndex)) return;
+            const state = gameState.generators[genIndex];
+            if (!state.unlocked || state.owned === 0) return;
+            
+            // Manual click gives 1 second worth of production from this generator
+            const clickBonus = getGeneratorProduction(genIndex);
+            gameState.attackPower += clickBonus;
+            gameState.totalEarned += clickBonus;
+            
+            // Visual feedback - speed up progress bar
+            gameState.generatorProgress[genIndex] = (gameState.generatorProgress[genIndex] + 25) % 100;
+            updateStats();
+        }
+
         function unlockGenerator(genIndex) {
+            if (!canPurchase('unlock-' + genIndex)) return;
             const gen = GENERATORS[genIndex];
             if (gameState.attackPower >= gen.unlockCost && !gameState.generators[genIndex].unlocked) {
                 gameState.attackPower -= gen.unlockCost;
@@ -1473,6 +1552,7 @@
         }
 
         function buyUpgrade(genIndex) {
+            if (!canPurchase('upgrade-' + genIndex)) return;
             const state = gameState.generators[genIndex];
             if (state.upgradeTier >= 50) return;
             
@@ -1491,6 +1571,7 @@
         }
 
         function buyAutoClicker(genIndex) {
+            if (!canPurchase('auto-' + genIndex)) return;
             const cost = getAutoClickerCost(genIndex);
             if (gameState.attackPower >= cost && !gameState.autoClickers[genIndex]) {
                 gameState.attackPower -= cost;
@@ -1505,6 +1586,7 @@
         }
 
         function buySpeedBonus(genIndex) {
+            if (!canPurchase('speed-' + genIndex)) return;
             const level = gameState.speedBonuses[genIndex];
             if (level >= 10) return;
             
@@ -1570,15 +1652,16 @@
         function confirmPrestige() {
             const prestige = window.pendingPrestige;
             
-            // Reset generators
-            gameState.attackPower = 0;
+            // Reset generators but start with 10 AP
+            gameState.attackPower = 10;
             gameState.generators = GENERATORS.map((g, i) => ({
                 owned: 0,
                 upgradeTier: 0,
                 unlocked: i === 0
             }));
+            gameState.generatorProgress = GENERATORS.map(() => 0);
             
-            // Keep shop upgrades
+            // Keep shop upgrades (autoClickers and speedBonuses)
             // Update prestige stats
             gameState.enemiesDefeated = prestige.enemiesDefeated;
             gameState.prestigeMultiplier = prestige.multiplier;
@@ -1608,16 +1691,21 @@
                 
                 if (state.unlocked) {
                     const progress = gameState.generatorProgress[i] || 0;
+                    const hasOwned = state.owned > 0;
+                    const clickValue = hasOwned ? getGeneratorProduction(i) : 0;
                     card.innerHTML = `
                         <div class="generator-header">
                             <div class="generator-info">
                                 <div class="generator-name">${gen.name}</div>
                                 <div class="generator-tier">Tier ${state.upgradeTier}/50 • Owned: ${state.owned}</div>
                             </div>
-                            <div class="generator-icon">${gen.icon}</div>
+                            <button class="generator-click-btn" ${!hasOwned ? 'disabled' : ''} data-action="click-generator" data-index="${i}">
+                                ${gen.icon}
+                                <span class="click-value">+${formatNumber(clickValue)}</span>
+                            </button>
                         </div>
                         <div class="generator-progress">
-                            <div class="generator-progress-fill" data-progress="${i}" style="width: ${state.owned > 0 ? progress : 0}%"></div>
+                            <div class="generator-progress-fill" data-progress="${i}" style="width: ${hasOwned ? progress : 0}%"></div>
                         </div>
                         <div class="generator-stats">
                             <div class="gen-stat">
@@ -1625,16 +1713,16 @@
                                 <span class="gen-stat-value">${formatNumber(production)}/s</span>
                             </div>
                             <div class="gen-stat">
-                                <span class="gen-stat-label">Base Output</span>
-                                <span class="gen-stat-value">${formatNumber(gen.baseProduction)}</span>
+                                <span class="gen-stat-label">Per Click</span>
+                                <span class="gen-stat-value">${formatNumber(clickValue)}</span>
                             </div>
                         </div>
                         <div class="generator-actions">
-                            <button class="btn-generator btn-buy" ${!canBuy ? 'disabled' : ''} onclick="buyGenerator(${i})">
+                            <button class="btn-generator btn-buy" ${!canBuy ? 'disabled' : ''} data-action="buy-generator" data-index="${i}">
                                 Buy +1
                                 <span class="btn-cost">${formatNumber(cost)} AP</span>
                             </button>
-                            <button class="btn-generator btn-upgrade" ${state.upgradeTier >= 50 || gameState.attackPower < getUpgradeCost(i, state.upgradeTier) ? 'disabled' : ''} onclick="buyUpgrade(${i})">
+                            <button class="btn-generator btn-upgrade" ${state.upgradeTier >= 50 || gameState.attackPower < getUpgradeCost(i, state.upgradeTier) ? 'disabled' : ''} data-action="buy-upgrade" data-index="${i}">
                                 Upgrade
                                 <span class="btn-cost">${state.upgradeTier >= 50 ? 'MAX' : formatNumber(getUpgradeCost(i, state.upgradeTier)) + ' AP'}</span>
                             </button>
@@ -1660,7 +1748,7 @@
                             </div>
                         </div>
                         <div class="generator-actions">
-                            <button class="btn-generator btn-buy" ${!canUnlock ? 'disabled' : ''} onclick="unlockGenerator(${i})" style="flex: 1;">
+                            <button class="btn-generator btn-buy" ${!canUnlock ? 'disabled' : ''} data-action="unlock-generator" data-index="${i}" style="flex: 1;">
                                 🔓 Unlock
                                 <span class="btn-cost">${formatNumber(gen.unlockCost)} AP</span>
                             </button>
@@ -1686,27 +1774,31 @@
                 section.className = 'upgrades-section';
                 
                 let upgradesHtml = '';
-                const startTier = Math.max(0, state.upgradeTier - 2);
+                const startTier = state.upgradeTier;
                 const endTier = Math.min(50, state.upgradeTier + 5);
                 
-                for (let tier = startTier; tier < endTier; tier++) {
-                    const cost = getUpgradeCost(i, tier);
-                    const owned = tier < state.upgradeTier;
-                    const canBuy = !owned && tier === state.upgradeTier && gameState.attackPower >= cost;
-                    
-                    upgradesHtml += `
-                        <div class="upgrade-card ${owned ? 'owned' : ''}">
-                            <div class="upgrade-info">
-                                <h4>${getUpgradeName(i, tier)}</h4>
-                                <p>+75% production for ${gen.name}</p>
+                if (startTier >= 50) {
+                    upgradesHtml = '<div class="upgrade-card owned"><div class="upgrade-info"><h4>All Upgrades Complete!</h4><p>Maximum tier reached</p></div></div>';
+                } else {
+                    for (let tier = startTier; tier < endTier; tier++) {
+                        const cost = getUpgradeCost(i, tier);
+                        const isNext = tier === state.upgradeTier;
+                        const canBuy = isNext && gameState.attackPower >= cost;
+                        
+                        upgradesHtml += `
+                            <div class="upgrade-card">
+                                <div class="upgrade-info">
+                                    <h4>${getUpgradeName(i, tier)}</h4>
+                                    <p>+75% production for ${gen.name}</p>
+                                </div>
+                                <button class="btn-upgrade-buy" 
+                                    ${!canBuy ? 'disabled' : ''} 
+                                    ${isNext ? `data-action="buy-upgrade" data-index="${i}"` : ''}>
+                                    ${isNext ? formatNumber(cost) + ' AP' : 'Tier ' + (tier + 1)}
+                                </button>
                             </div>
-                            <button class="btn-upgrade-buy ${owned ? 'owned' : ''}" 
-                                ${!canBuy && !owned ? 'disabled' : ''} 
-                                ${owned ? '' : `onclick="buyUpgrade(${i})"`}>
-                                ${owned ? '✓ Owned' : formatNumber(cost) + ' AP'}
-                            </button>
-                        </div>
-                    `;
+                        `;
+                    }
                 }
                 
                 section.innerHTML = `
@@ -1733,12 +1825,12 @@
                 autoGrid.innerHTML += `
                     <div class="upgrade-card ${owned ? 'owned' : ''}">
                         <div class="upgrade-info">
-                            <h4>${gen.icon} ${gen.name} Auto-Buyer</h4>
-                            <p>Automatically purchases ${gen.name} when affordable</p>
+                            <h4>${gen.icon} ${gen.name} Auto-Clicker</h4>
+                            <p>Automatically clicks ${gen.name} for bonus production</p>
                         </div>
                         <button class="btn-upgrade-buy ${owned ? 'owned' : ''}" 
                             ${!canBuy && !owned ? 'disabled' : ''} 
-                            ${owned ? '' : `onclick="buyAutoClicker(${i})"`}>
+                            ${owned ? '' : `data-action="buy-autoclicker" data-index="${i}"`}>
                             ${owned ? '✓ Active' : formatNumber(cost) + ' AP'}
                         </button>
                     </div>
@@ -1765,7 +1857,7 @@
                         </div>
                         <button class="btn-upgrade-buy ${maxed ? 'owned' : ''}" 
                             ${!canBuy && !maxed ? 'disabled' : ''} 
-                            ${maxed ? '' : `onclick="buySpeedBonus(${i})"`}>
+                            ${maxed ? '' : `data-action="buy-speed" data-index="${i}"`}>
                             ${maxed ? 'MAX' : formatNumber(cost) + ' AP'}
                         </button>
                     </div>
@@ -1905,14 +1997,13 @@
             gameState.totalEarned += production;
             gameState.playTime += delta;
             
-            // Auto-clickers
+            // Auto-clickers - simulate clicking on generator to add production burst
             GENERATORS.forEach((gen, i) => {
-                if (gameState.autoClickers[i] && gameState.generators[i].unlocked) {
-                    const cost = getGeneratorCost(i);
-                    if (gameState.attackPower >= cost) {
-                        gameState.attackPower -= cost;
-                        gameState.generators[i].owned++;
-                    }
+                if (gameState.autoClickers[i] && gameState.generators[i].unlocked && gameState.generators[i].owned > 0) {
+                    // Each auto-click adds 10% of that generator's per-second production
+                    const clickBonus = getGeneratorProduction(i) * 0.1 * delta * 10;
+                    gameState.attackPower += clickBonus;
+                    gameState.totalEarned += clickBonus;
                 }
             });
             
@@ -1956,6 +2047,62 @@
                 location.reload();
             }
         }
+
+        // ==================== EVENT DELEGATION FOR MOBILE ====================
+        let touchHandled = false;
+        
+        function handleAction(target) {
+            const action = target.dataset.action;
+            const index = parseInt(target.dataset.index);
+            
+            if (!action || isNaN(index)) return false;
+            if (target.disabled) return false;
+            
+            switch(action) {
+                case 'buy-generator':
+                    buyGenerator(index);
+                    break;
+                case 'click-generator':
+                    clickGenerator(index);
+                    break;
+                case 'unlock-generator':
+                    unlockGenerator(index);
+                    break;
+                case 'buy-upgrade':
+                    buyUpgrade(index);
+                    break;
+                case 'buy-autoclicker':
+                    buyAutoClicker(index);
+                    break;
+                case 'buy-speed':
+                    buySpeedBonus(index);
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
+        
+        document.addEventListener('touchend', function(e) {
+            const target = e.target.closest('button[data-action]');
+            if (!target) return;
+            
+            e.preventDefault();
+            touchHandled = true;
+            handleAction(target);
+            
+            setTimeout(() => { touchHandled = false; }, 300);
+        }, { passive: false });
+        
+        document.addEventListener('click', function(e) {
+            if (touchHandled) return;
+            
+            const target = e.target.closest('button[data-action]');
+            if (!target) return;
+            
+            e.preventDefault();
+            handleAction(target);
+        });
 
         // ==================== TAB NAVIGATION ====================
         document.querySelectorAll('.tab-btn').forEach(btn => {
