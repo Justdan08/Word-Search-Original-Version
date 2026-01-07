@@ -8,16 +8,9 @@ let currentWords = []; // Stores the 15 randomly selected words
 let timerInterval = null; // Timer interval
 let secondsElapsed = 0; // Total seconds elapsed
 
-// Initialize the game
-document.addEventListener("DOMContentLoaded", initializeGame);
-
-// Reset button
-document.getElementById("reset-button").addEventListener("click", resetGame);
-// script.js
-
 // Ensure settings apply on load
 document.addEventListener('DOMContentLoaded', () => {
-    initializeGame(); // Ensure this function exists
+    initializeGame();
     updateSolvedWordStyle();
     updateHighlightColor();
 
@@ -28,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create options menu
     createOptionsMenu();
+    
+    // Reset button
+    document.getElementById("reset-button").addEventListener("click", resetGame);
 });
 
 // Create and add options menu
@@ -56,6 +52,7 @@ function createOptionsMenu() {
     document.getElementById('options-button').addEventListener('click', toggleOptionsMenu);
     document.getElementById('highlight-color-picker').addEventListener('input', changeHighlightColor);
 }
+
 const wordButtons = document.querySelectorAll('.options-menu button');
 
 wordButtons.forEach(button => {
@@ -106,6 +103,7 @@ function updateSolvedWordStyle() {
         word.classList.add(`${style}-style`);
     });
 }
+
 // Function to change highlight color
 function changeHighlightColor(event) {
     const color = event.target.value;
@@ -144,8 +142,7 @@ function positionElementsAbovePuzzle() {
     }
 }
 
-// Reposition on load and on resize
-document.addEventListener('DOMContentLoaded', positionElementsAbovePuzzle);
+// Reposition on resize
 window.addEventListener('resize', positionElementsAbovePuzzle);
 
 // ========================
@@ -153,6 +150,11 @@ window.addEventListener('resize', positionElementsAbovePuzzle);
 // ========================
 
 function startTimer() {
+  // Clear any existing timer first to prevent duplicates
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+  
   timerInterval = setInterval(() => {
     secondsElapsed++;
     updateTimerDisplay();
@@ -160,14 +162,20 @@ function startTimer() {
 }
 
 function stopTimer() {
-  clearInterval(timerInterval);
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
 }
 
 function updateTimerDisplay() {
   const minutes = Math.floor(secondsElapsed / 60);
   const seconds = secondsElapsed % 60;
   const timerDisplay = `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  document.getElementById("timer").textContent = timerDisplay;
+  const timerElement = document.getElementById("timer");
+  if (timerElement) {
+    timerElement.textContent = timerDisplay;
+  }
 }
 
 // ========================
@@ -175,14 +183,17 @@ function updateTimerDisplay() {
 // ========================
 
 function initializeGame() {
+  // Stop any existing timer first
+  stopTimer();
+  
   // Reset timer
   secondsElapsed = 0;
   updateTimerDisplay();
   startTimer();
 
- if (typeof gridSize === 'undefined') {
+  if (typeof gridSize === 'undefined') {
     var gridSize = 15;
-}
+  }
 
   // Get the word pool from the HTML
   const wordPoolElement = document.getElementById("word-pool");
@@ -198,10 +209,10 @@ function initializeGame() {
   wordsearch.innerHTML = "";
   wordsContainer.innerHTML = ""; // Clear the word list completely
 
-if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-    }
-    updateSolvedWordStyle();
+  if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+  updateSolvedWordStyle();
 
   // Create the "Words to find" box
   const wordsBox = document.createElement("div");
@@ -417,15 +428,7 @@ function checkForWord() {
       cell.classList.remove("selected");
     });
 
-foundWords.push(selectedWord);
-    selectedCells.forEach(cell => {
-        if (!cell.classList.contains("found")) {
-            cell.classList.add("found");
-        }
-        cell.classList.remove("selected");
-    });
-
- updateSolvedWordStyle();
+    updateSolvedWordStyle();
 
     document.querySelectorAll("#words div").forEach(el => {
       if (el.textContent === selectedWord) el.classList.add("found");
